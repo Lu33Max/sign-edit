@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 
 public class SignColorPicker extends AbstractWidget {
 
-    private static final int SQUARE_SIZE = 100;
+    private static final int SQUARE_SIZE = 90;
     private static final int HUE_WIDTH = 14;
     private static final int GAP = 6;
 

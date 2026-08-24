@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 
 public final class SignColorPalette {
 
-    private static final int CELL_SIZE = 18;
+    private static final int CELL_SIZE = 12;
     private static final int CELL_GAP = 2;
 
     private SignColorPalette() {
@@ -23,30 +23,29 @@ public final class SignColorPalette {
                 (ScreenInvoker) screen;
 
         int gridWidth =
-                4 * CELL_SIZE
-                        + 3 * CELL_GAP;
+                8 * CELL_SIZE
+                        + 7 * CELL_GAP;
 
         int gridHeight =
-                4 * CELL_SIZE
-                        + 3 * CELL_GAP;
+                2 * CELL_SIZE
+                        + CELL_GAP;
 
         int startX =
                 screen.width / 2
-                        - 100
-                        - gridWidth
-                        - 12;
+                        - 75
+                        - gridWidth;
 
         int startY =
                 screen.height / 4
                         - gridHeight / 2
-                        + 20;
+                        - 50;
 
         for (int i = 0; i < MinecraftColors.COLORS.length; i++) {
             MinecraftColors.ColorEntry color =
                     MinecraftColors.COLORS[i];
 
-            int column = i % 4;
-            int row = i / 4;
+            int column = i % 8;
+            int row = i / 8;
 
             int x =
                     startX

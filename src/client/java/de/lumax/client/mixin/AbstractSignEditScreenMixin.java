@@ -456,8 +456,8 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         );
 
         signedit$colorPicker = new SignColorPicker(
-                screen.width / 2 + 80,
-                screen.height / 4 - 20,
+                screen.width / 2 - 185,
+                screen.height / 4 - 30,
                 0xFF5555,
                 () -> {
                     int color = this.signedit$colorPicker.getColor();
@@ -468,9 +468,9 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         );
 
         this.signedit$hexField = new HexColorField(
-                screen.width / 2 + 80,
-                screen.height / 4 + 86,
-                80,
+                screen.width / 2 - 185,
+                screen.height / 4 + 65,
+                70,
                 20,
                 this.signedit$colorPicker.getColor(),
                 color -> {
@@ -493,8 +493,8 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
                     this.signedit$applySelectedColor(color);
                 }
         ).bounds(
-                screen.width / 2 + 165,
-                screen.height / 4 + 86,
+                screen.width / 2 - 110,
+                screen.height / 4 + 65,
                 35,
                 20
         ).build();

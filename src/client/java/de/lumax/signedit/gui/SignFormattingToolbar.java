@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 
 public final class SignFormattingToolbar {
 
-    private static final int BUTTON_WIDTH = 30;
+    private static final int BUTTON_WIDTH = 20;
     private static final int BUTTON_HEIGHT = 20;
     private static final int BUTTON_GAP = 2;
 
@@ -26,8 +26,8 @@ public final class SignFormattingToolbar {
                 buttonCount * BUTTON_WIDTH
                         + (buttonCount - 1) * BUTTON_GAP;
 
-        int startX = screen.width / 2 - totalWidth / 2;
-        int y = screen.height / 4 + 120;
+        int startX = screen.width / 2 - 184;
+        int y = screen.height / 4 + 90;
 
         addFormattingButton(
                 invoker,
@@ -43,7 +43,7 @@ public final class SignFormattingToolbar {
                 access,
                 "I",
                 FormattingType.ITALIC,
-                startX + 32,
+                startX + BUTTON_WIDTH + BUTTON_GAP,
                 y
         );
 
@@ -52,7 +52,7 @@ public final class SignFormattingToolbar {
                 access,
                 "U",
                 FormattingType.UNDERLINED,
-                startX + 64,
+                startX + 2 * BUTTON_WIDTH + 2 * BUTTON_GAP,
                 y
         );
 
@@ -61,7 +61,7 @@ public final class SignFormattingToolbar {
                 access,
                 "S",
                 FormattingType.STRIKETHROUGH,
-                startX + 96,
+                startX + 3 * BUTTON_WIDTH + 3 * BUTTON_GAP,
                 y
         );
 
@@ -70,7 +70,7 @@ public final class SignFormattingToolbar {
                 access,
                 "O",
                 FormattingType.OBFUSCATED,
-                startX + 128,
+                startX + 4 * BUTTON_WIDTH + 4 * BUTTON_GAP,
                 y
         );
     }
