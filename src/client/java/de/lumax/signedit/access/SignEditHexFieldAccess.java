@@ -7,4 +7,6 @@ public interface SignEditHexFieldAccess {
             double mouseY,
             int button
     );
+
+    void signedit$finishScreenMouseClick();
 }

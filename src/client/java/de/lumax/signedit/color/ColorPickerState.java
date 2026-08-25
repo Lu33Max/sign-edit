@@ -51,7 +51,8 @@ public class ColorPickerState {
         }
 
         if (delta == 0.0f) {
-            hue = 0.0f;
+            // Hue is undefined for grayscale colors. Keep the previous hue so
+            // dragging toward black does not make the hue selector jump to red.
             return;
         }
 

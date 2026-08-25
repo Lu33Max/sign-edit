@@ -9,6 +9,8 @@ import de.lumax.signedit.gui.SignColorPalette;
 import de.lumax.signedit.gui.SignFormattingToolbar;
 import de.lumax.signedit.server.SignFormattingPayloadFactory;
 import de.lumax.signedit.text.SignTextModel;
+import de.lumax.signedit.text.FormattingType;
+import de.lumax.signedit.text.TextStyle;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -91,6 +93,72 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
     }
 
     @Unique
+    private TextStyle signedit$activeStyle = TextStyle.EMPTY;
+
+    @Unique
+    private boolean signedit$clearToolbarFocusAfterClick;
+
+    @Unique
+    @Override
+    public TextStyle signedit$getActiveStyle() {
+        return this.signedit$activeStyle;
+    }
+
+    @Unique
+    @Override
+    public void signedit$clearToolbarFocusAfterClick() {
+        this.signedit$clearToolbarFocusAfterClick = true;
+    }
+
+    @Unique
+    @Override
+    public void signedit$toggleFormatting(FormattingType type) {
+        boolean enabled = switch (type) {
+            case BOLD -> signedit$activeStyle.bold();
+            case ITALIC -> signedit$activeStyle.italic();
+            case UNDERLINED -> signedit$activeStyle.underlined();
+            case STRIKETHROUGH -> signedit$activeStyle.strikethrough();
+            case OBFUSCATED -> signedit$activeStyle.obfuscated();
+        };
+        boolean newValue = !enabled;
+        int cursor = this.signField.getCursorPos();
+        int selection = this.signField.getSelectionPos();
+        int start = Math.min(cursor, selection);
+        int end = Math.max(cursor, selection);
+
+        if (start != end) {
+            this.signedit$model.setFormatting(this.line, start, end, type, newValue);
+        }
+
+        this.signedit$activeStyle = this.signedit$activeStyle.withFormatting(type, newValue);
+        signedit$updateToolbar();
+    }
+
+    @Unique
+    @Override
+    public void signedit$selectColor(int color) {
+        int cursor = this.signField.getCursorPos();
+        int selection = this.signField.getSelectionPos();
+        int start = Math.min(cursor, selection);
+        int end = Math.max(cursor, selection);
+
+        if (start != end) {
+            this.signedit$model.setColor(this.line, start, end, color);
+        }
+
+        this.signedit$activeStyle = this.signedit$activeStyle.withColor(color);
+
+        if (this.signedit$colorPicker != null
+                && this.signedit$colorPicker.getColor() != color) {
+            this.signedit$colorPicker.setColor(color);
+        }
+
+        if (this.signedit$hexField != null && !this.signedit$hexField.isFocused()) {
+            this.signedit$hexField.setColor(color);
+        }
+    }
+
+    @Unique
     private int signedit$getFormattedTextX(
             int line,
             int charIndex
@@ -159,12 +227,9 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             return;
         }
 
-        this.signedit$model.setLineText(
-                this.line,
-                message,
-                access.signedit$getEditStart(),
-                access.signedit$getEditEnd()
-        );
+        this.signedit$model.setLineText(this.line, message,
+                access.signedit$getEditStart(), access.signedit$getEditEnd(),
+                this.signedit$activeStyle);
 
         access.signedit$clearPendingEdit();
     }
@@ -176,7 +241,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
     private int signedit$lastLine = -1;
 
     @Unique
-    private void signedit$updateColorPickerFromCursor() {
+    private void signedit$updateFormattingFromCursor() {
         int cursor = this.signField.getCursorPos();
         int line = this.line;
 
@@ -207,11 +272,10 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             return;
         }
 
-        Integer color =
-                model.getColorAt(
-                        line,
-                        index
-                );
+        this.signedit$activeStyle = model.getStyleAt(line, index);
+        signedit$updateToolbar();
+
+        Integer color = this.signedit$activeStyle.color();
 
         if (color == null) {
             return;
@@ -229,6 +293,13 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             this.signedit$hexField.setColor(
                     color
             );
+        }
+    }
+
+    @Unique
+    private void signedit$updateToolbar() {
+        if (this.signedit$toolbar != null) {
+            this.signedit$toolbar.update(this.signedit$activeStyle);
         }
     }
 
@@ -278,7 +349,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             int color,
             boolean dropShadow
     ) {
-        signedit$updateColorPickerFromCursor();
+        signedit$updateFormattingFromCursor();
 
         int lineHeight = this.sign.getTextLineHeight();
 
@@ -439,6 +510,9 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
     @Unique
     private Button signedit$applyColorButton;
 
+    @Unique
+    private SignFormattingToolbar signedit$toolbar;
+
     @Inject(method = "init", at = @At("TAIL"))
     private void signedit$init(CallbackInfo ci) {
         this.signedit$model.loadFromSignText(
@@ -449,7 +523,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         AbstractSignEditScreen screen = (AbstractSignEditScreen) (Object) this;
         ScreenInvoker invoker = (ScreenInvoker) (Object) this;
 
-        SignFormattingToolbar.addTo(screen);
+        this.signedit$toolbar = SignFormattingToolbar.addTo(screen);
         SignColorPalette.addTo(
             screen,
             this
@@ -463,7 +537,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
                     int color = this.signedit$colorPicker.getColor();
 
                     this.signedit$hexField.setColor(color);
-                    this.signedit$applySelectedColor(color);
+                    this.signedit$selectColor(color);
                 }
         );
 
@@ -475,7 +549,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
                 this.signedit$colorPicker.getColor(),
                 color -> {
                     this.signedit$colorPicker.setColor(color);
-                    this.signedit$applySelectedColor(color);
+                    this.signedit$selectColor(color);
                 },
                 () -> {
                     invoker.signedit$setInitialFocus(
@@ -490,7 +564,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
                     int color =
                             this.signedit$colorPicker.getColor();
 
-                    this.signedit$applySelectedColor(color);
+                    this.signedit$selectColor(color);
                 }
         ).bounds(
                 screen.width / 2 - 110,
@@ -556,38 +630,6 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
     }
 
     @Unique
-    private void signedit$applySelectedColor(int color) {
-        SignEditScreenAccess access =
-                (SignEditScreenAccess) (Object) this;
-
-        if (!access.signedit$isSelecting()) {
-            return;
-        }
-
-        int cursor =
-                access.signedit$getCursorPos();
-
-        int selection =
-                access.signedit$getSelectionPos();
-
-        int start =
-                Math.min(cursor, selection);
-
-        int end =
-                Math.max(cursor, selection);
-
-        int line =
-                access.signedit$getCurrentLine();
-
-        access.signedit$getModel().setColor(
-                line,
-                start,
-                end,
-                color
-        );
-    }
-
-    @Unique
     private boolean signedit$isMouseOverHexField(
             double mouseX,
             double mouseY
@@ -619,14 +661,13 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
     }
 
     @Unique
-    private void signedit$setSelectedColor(int color) {
-        this.signedit$colorPicker.setColor(color);
-
-        if (this.signedit$hexField != null) {
-            this.signedit$hexField.setColor(color);
+    public void signedit$finishScreenMouseClick() {
+        if (!this.signedit$clearToolbarFocusAfterClick) {
+            return;
         }
 
-        this.signedit$applySelectedColor(color);
+        ((ScreenInvoker) (Object) this).signedit$clearFocus();
+        this.signedit$clearToolbarFocusAfterClick = false;
     }
 
     @Inject(method = "setMessage", at = @At("TAIL"))

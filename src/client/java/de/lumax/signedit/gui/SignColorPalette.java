@@ -92,30 +92,6 @@ public final class SignColorPalette {
             SignEditScreenAccess access,
             int color
     ) {
-        if (!access.signedit$isSelecting()) {
-            return;
-        }
-
-        int cursor =
-                access.signedit$getCursorPos();
-
-        int selection =
-                access.signedit$getSelectionPos();
-
-        int start =
-                Math.min(cursor, selection);
-
-        int end =
-                Math.max(cursor, selection);
-
-        int line =
-                access.signedit$getCurrentLine();
-
-        access.signedit$getModel().setColor(
-                line,
-                start,
-                end,
-                color
-        );
+        access.signedit$selectColor(color);
     }
 }

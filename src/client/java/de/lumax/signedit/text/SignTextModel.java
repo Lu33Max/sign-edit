@@ -28,6 +28,36 @@ public class SignTextModel {
         lines[index].replaceText(text, editStart, editEnd);
     }
 
+    public void setLineText(
+            int index,
+            String text,
+            int editStart,
+            int editEnd,
+            TextStyle insertedStyle
+    ) {
+        lines[index].replaceText(text, editStart, editEnd, insertedStyle);
+    }
+
+    public TextStyle getStyleAt(int line, int index) {
+        if (line < 0 || line >= lines.length) {
+            return TextStyle.EMPTY;
+        }
+
+        return lines[line].getStyleAt(index);
+    }
+
+    public void setFormatting(
+            int line,
+            int start,
+            int end,
+            FormattingType type,
+            boolean value
+    ) {
+        if (line >= 0 && line < lines.length) {
+            lines[line].setFormatting(start, end, type, value);
+        }
+    }
+
     public Integer getColorAt(
             int line,
             int index

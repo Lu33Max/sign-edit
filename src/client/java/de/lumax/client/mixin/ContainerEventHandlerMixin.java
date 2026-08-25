@@ -31,4 +31,20 @@ public interface ContainerEventHandlerMixin {
             );
         }
     }
+
+    @Inject(
+            method = "mouseClicked",
+            at = @At("TAIL")
+    )
+    private void signedit$afterMouseClicked(
+            MouseButtonEvent event,
+            boolean doubleClick,
+            CallbackInfoReturnable<Boolean> cir
+    ) {
+        ContainerEventHandler handler = (ContainerEventHandler) (Object) this;
+
+        if (handler instanceof SignEditHexFieldAccess access) {
+            access.signedit$finishScreenMouseClick();
+        }
+    }
 }

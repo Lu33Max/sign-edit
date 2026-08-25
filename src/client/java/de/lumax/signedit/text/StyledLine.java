@@ -102,10 +102,41 @@ public class StyledLine {
         ranges.addAll(newRanges);
     }
 
+    public void setFormatting(
+            int start,
+            int end,
+            FormattingType type,
+            boolean value
+    ) {
+        if (start < 0 || end > text.length() || start >= end) {
+            return;
+        }
+
+        List<TextStyle> styles = new ArrayList<>(text.length());
+
+        for (int i = 0; i < text.length(); i++) {
+            TextStyle style = getStyleAt(i);
+            styles.add(i >= start && i < end
+                    ? style.withFormatting(type, value)
+                    : style);
+        }
+
+        rebuildRanges(styles);
+    }
+
     public void replaceText(
             String newText,
             int editStart,
             int editEnd
+    ) {
+        replaceText(newText, editStart, editEnd, null);
+    }
+
+    public void replaceText(
+            String newText,
+            int editStart,
+            int editEnd,
+            TextStyle requestedInsertedStyle
     ) {
         String oldText = this.text;
 
@@ -126,12 +157,14 @@ public class StyledLine {
         }
 
         // Style für neu eingefügten Text
-        TextStyle insertedStyle = TextStyle.EMPTY;
+        TextStyle insertedStyle = requestedInsertedStyle;
 
-        if (editStart > 0) {
+        if (insertedStyle == null && editStart > 0) {
             insertedStyle = oldStyles.get(editStart - 1);
-        } else if (editEnd < oldStyles.size()) {
+        } else if (insertedStyle == null && editEnd < oldStyles.size()) {
             insertedStyle = oldStyles.get(editEnd);
+        } else if (insertedStyle == null) {
+            insertedStyle = TextStyle.EMPTY;
         }
 
         int insertedLength =
