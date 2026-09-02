@@ -89,7 +89,7 @@ public record TextStyle(
         );
     }
 
-    public TextStyle withColor(int rgb) {
+    public TextStyle withColor(Integer rgb) {
         return new TextStyle(
                 bold,
                 italic,
@@ -99,7 +99,6 @@ public record TextStyle(
                 rgb
         );
     }
-
 
     public Style toMinecraftStyle() {
         Style style = Style.EMPTY

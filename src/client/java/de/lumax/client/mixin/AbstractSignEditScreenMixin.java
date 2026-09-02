@@ -21,6 +21,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -156,6 +157,17 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         if (this.signedit$hexField != null && !this.signedit$hexField.isFocused()) {
             this.signedit$hexField.setColor(color);
         }
+    }
+
+    @Unique
+    public void signedit$resetColor(){
+        int cursor = this.signField.getCursorPos();
+        int selection = this.signField.getSelectionPos();
+        int start = Math.min(cursor, selection);
+        int end = Math.max(cursor, selection);
+
+        this.signedit$model.setColor(this.line, start, end, null);
+        this.signedit$activeStyle = this.signedit$activeStyle.withColor(null);
     }
 
     @Unique
@@ -511,6 +523,9 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
     private Button signedit$applyColorButton;
 
     @Unique
+    private Button signedit$resetColorButton;
+
+    @Unique
     private SignFormattingToolbar signedit$toolbar;
 
     @Inject(method = "init", at = @At("TAIL"))
@@ -544,7 +559,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         this.signedit$hexField = new HexColorField(
                 screen.width / 2 - 185,
                 screen.height / 4 + 65,
-                70,
+                50,
                 20,
                 this.signedit$colorPicker.getColor(),
                 color -> {
@@ -558,6 +573,18 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
                 }
         );
 
+        this.signedit$resetColorButton = Button.builder(
+                Component.literal("Reset"),
+                _ -> {
+                    this.signedit$resetColor();
+                }
+        ).bounds(
+                screen.width / 2 - 135,
+                screen.height / 4 + 65,
+                30,
+                20
+        ).build();
+
         this.signedit$applyColorButton = Button.builder(
                 Component.literal("Apply"),
                 button -> {
@@ -567,9 +594,9 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
                     this.signedit$selectColor(color);
                 }
         ).bounds(
-                screen.width / 2 - 110,
+                screen.width / 2 - 105,
                 screen.height / 4 + 65,
-                35,
+                30,
                 20
         ).build();
 
@@ -586,6 +613,11 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         ((ScreenInvoker) (Object) this)
                 .signedit$addRenderableWidget(
                         this.signedit$applyColorButton
+                );
+
+        ((ScreenInvoker) (Object) this)
+                .signedit$addRenderableWidget(
+                        this.signedit$resetColorButton
                 );
     }
 

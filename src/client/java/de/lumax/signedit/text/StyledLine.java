@@ -1,5 +1,7 @@
 package de.lumax.signedit.text;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,8 +142,8 @@ public class StyledLine {
     ) {
         String oldText = this.text;
 
-        editStart = Math.max(0, Math.min(editStart, oldText.length()));
-        editEnd = Math.max(editStart, Math.min(editEnd, oldText.length()));
+        editStart = Math.clamp(editStart, 0, oldText.length());
+        editEnd = Math.clamp(editEnd, editStart, oldText.length());
 
         List<TextStyle> oldStyles = new ArrayList<>(oldText.length());
 
@@ -211,8 +213,8 @@ public class StyledLine {
     public void setColor(
             int start,
             int end,
-            int color
-    ) {
+            @Nullable Integer color
+            ) {
         if (start < 0 || end > text.length() || start >= end) {
             return;
         }

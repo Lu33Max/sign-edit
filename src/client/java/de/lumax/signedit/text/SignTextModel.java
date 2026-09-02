@@ -3,6 +3,7 @@ package de.lumax.signedit.text;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.level.block.entity.SignText;
+import org.jspecify.annotations.Nullable;
 
 public class SignTextModel {
 
@@ -90,7 +91,7 @@ public class SignTextModel {
             int line,
             int start,
             int end,
-            int color
+            @Nullable Integer color
     ) {
         if (line < 0 || line >= lines.length) {
             return;
