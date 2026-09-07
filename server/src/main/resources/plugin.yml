@@ -1,0 +1,8 @@
+name: SignEdit-Paper
+version: '0.1.0'
+
+main: de.lumax.signEditPaper.SignEditPaper
+api-version: '26.2'
+author: LuMax
+description: Server-side support for the SignEdit Fabric mod
+load: POSTWORLD

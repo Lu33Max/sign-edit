@@ -4,6 +4,10 @@ pluginManagement {
 			name = 'Fabric'
 			url = 'https://maven.fabricmc.net/'
 		}
+		maven {
+			name = 'PaperMC'
+			url = 'https://repo.papermc.io/repository/maven-public/'
+		}
 		mavenCentral()
 		gradlePluginPortal()
 	}
@@ -11,3 +15,6 @@ pluginManagement {
 
 // Should match your modid
 rootProject.name = 'sign-edit'
+
+include ':sign-edit-paper'
+project(':sign-edit-paper').projectDir = file('server')
