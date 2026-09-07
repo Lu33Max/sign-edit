@@ -17,28 +17,12 @@ public final class SignColorPalette {
 
     public static void addTo(
             Screen screen,
-            SignEditScreenAccess access
+            SignEditScreenAccess access,
+            int startX,
+            int startY
     ) {
         ScreenInvoker invoker =
                 (ScreenInvoker) screen;
-
-        int gridWidth =
-                8 * CELL_SIZE
-                        + 7 * CELL_GAP;
-
-        int gridHeight =
-                2 * CELL_SIZE
-                        + CELL_GAP;
-
-        int startX =
-                screen.width / 2
-                        - 75
-                        - gridWidth;
-
-        int startY =
-                screen.height / 4
-                        - gridHeight / 2
-                        - 50;
 
         for (int i = 0; i < MinecraftColors.COLORS.length; i++) {
             MinecraftColors.ColorEntry color =

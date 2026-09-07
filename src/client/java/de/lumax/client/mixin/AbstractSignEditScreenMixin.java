@@ -5,7 +5,7 @@ import de.lumax.signedit.access.SignEditScreenAccess;
 import de.lumax.signedit.access.TextFieldHelperAccess;
 import de.lumax.signedit.color.HexColorField;
 import de.lumax.signedit.color.SignColorPicker;
-import de.lumax.signedit.gui.SignColorPalette;
+import de.lumax.signedit.gui.SignEditLayout;
 import de.lumax.signedit.gui.SignFormattingToolbar;
 import de.lumax.signedit.server.SignFormattingPayloadFactory;
 import de.lumax.signedit.text.SignTextModel;
@@ -15,7 +15,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
 import net.minecraft.network.chat.Component;
@@ -520,13 +519,10 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
     private HexColorField signedit$hexField;
 
     @Unique
-    private Button signedit$applyColorButton;
-
-    @Unique
-    private Button signedit$resetColorButton;
-
-    @Unique
     private SignFormattingToolbar signedit$toolbar;
+
+        @Unique
+        private SignEditLayout signedit$layout;
 
     @Inject(method = "init", at = @At("TAIL"))
     private void signedit$init(CallbackInfo ci) {
@@ -536,89 +532,14 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         );
 
         AbstractSignEditScreen screen = (AbstractSignEditScreen) (Object) this;
-        ScreenInvoker invoker = (ScreenInvoker) (Object) this;
-
-        this.signedit$toolbar = SignFormattingToolbar.addTo(screen);
-        SignColorPalette.addTo(
-            screen,
-            this
+        this.signedit$layout = SignEditLayout.addTo(
+                screen,
+                this,
+                this::signedit$resetColor
         );
-
-        signedit$colorPicker = new SignColorPicker(
-                screen.width / 2 - 185,
-                screen.height / 4 - 30,
-                0xFF5555,
-                () -> {
-                    int color = this.signedit$colorPicker.getColor();
-
-                    this.signedit$hexField.setColor(color);
-                    this.signedit$selectColor(color);
-                }
-        );
-
-        this.signedit$hexField = new HexColorField(
-                screen.width / 2 - 185,
-                screen.height / 4 + 65,
-                50,
-                20,
-                this.signedit$colorPicker.getColor(),
-                color -> {
-                    this.signedit$colorPicker.setColor(color);
-                    this.signedit$selectColor(color);
-                },
-                () -> {
-                    invoker.signedit$setInitialFocus(
-                            this.signedit$hexField
-                    );
-                }
-        );
-
-        this.signedit$resetColorButton = Button.builder(
-                Component.literal("Reset"),
-                _ -> {
-                    this.signedit$resetColor();
-                }
-        ).bounds(
-                screen.width / 2 - 135,
-                screen.height / 4 + 65,
-                30,
-                20
-        ).build();
-
-        this.signedit$applyColorButton = Button.builder(
-                Component.literal("Apply"),
-                button -> {
-                    int color =
-                            this.signedit$colorPicker.getColor();
-
-                    this.signedit$selectColor(color);
-                }
-        ).bounds(
-                screen.width / 2 - 105,
-                screen.height / 4 + 65,
-                30,
-                20
-        ).build();
-
-        ((ScreenInvoker) (Object) this)
-                .signedit$addRenderableWidget(
-                        signedit$colorPicker
-                );
-
-        ((ScreenInvoker) (Object) this)
-                .signedit$addRenderableWidget(
-                        this.signedit$hexField
-                );
-
-        ((ScreenInvoker) (Object) this)
-                .signedit$addRenderableWidget(
-                        this.signedit$applyColorButton
-                );
-
-        ((ScreenInvoker) (Object) this)
-                .signedit$addRenderableWidget(
-                        this.signedit$resetColorButton
-                );
+        this.signedit$colorPicker = this.signedit$layout.getColorPicker();
+        this.signedit$hexField = this.signedit$layout.getHexField();
+        this.signedit$toolbar = this.signedit$layout.getToolbar();
     }
 
     @Inject(

@@ -22,12 +22,14 @@ public final class SignFormattingToolbar {
     private SignFormattingToolbar() {
     }
 
-    public static SignFormattingToolbar addTo(Screen screen) {
+    public static SignFormattingToolbar addTo(
+            Screen screen,
+            SignEditScreenAccess access,
+            int startX,
+            int y
+    ) {
         ScreenInvoker invoker = (ScreenInvoker) screen;
-        SignEditScreenAccess access = (SignEditScreenAccess) screen;
         SignFormattingToolbar toolbar = new SignFormattingToolbar();
-        int startX = screen.width / 2 - 184;
-        int y = screen.height / 4 + 90;
 
         toolbar.addFormattingButton(invoker, access, "B", FormattingType.BOLD, startX, y);
         toolbar.addFormattingButton(invoker, access, "I", FormattingType.ITALIC, startX + BUTTON_WIDTH + BUTTON_GAP, y);
@@ -48,7 +50,14 @@ public final class SignFormattingToolbar {
                 case STRIKETHROUGH -> "S";
                 case OBFUSCATED -> "O";
             };
-            entry.getValue().setMessage(Component.literal(enabled ? "[" + label + "]" : label));
+                entry.getValue().setMessage(
+                    Component.literal(enabled ? "[" + label + "]" : label)
+                        .withStyle(
+                            TextStyle.EMPTY
+                                .withFormatting(entry.getKey(), true)
+                                .toMinecraftStyle()
+                        )
+                );
         }
     }
 
