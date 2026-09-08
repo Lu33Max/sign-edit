@@ -10,21 +10,21 @@ public final class SignEditPaper extends JavaPlugin {
         getLogger().info("SignEdit-Paper enabled");
 
         getServer().getPluginManager().registerEvents(
-                new SignChangeListener(this),
-                this
+            new SignChangeListener(this),
+            this
         );
         getServer().getMessenger().registerIncomingPluginChannel(
-                this,
-                CHANNEL,
-                new SignFormattingListener(this)
+            this,
+            CHANNEL,
+            new SignFormattingListener(this)
         );
     }
 
     @Override
     public void onDisable() {
         getServer().getMessenger().unregisterIncomingPluginChannel(
-                this,
-                CHANNEL
+            this,
+            CHANNEL
         );
     }
 }

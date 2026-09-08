@@ -1,8 +1,9 @@
 name: SignEdit-Paper
-version: '0.1.0'
+version: '1.0.0'
 
 main: de.lumax.signEditPaper.SignEditPaper
 api-version: '26.2'
-author: LuMax
+author: Lu33Max
 description: Server-side support for the SignEdit Fabric mod
+website: https://github.com/Lu33Max/sign-edit
 load: POSTWORLD

@@ -1,15 +1,11 @@
 package de.lumax.signEditPaper;
 
-import io.papermc.paper.registry.RegistryAccess;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.block.sign.Side;
-import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public final class SignFormattingListener
         implements PluginMessageListener {
@@ -24,7 +20,7 @@ public final class SignFormattingListener
     public void onPluginMessageReceived(
             @NotNull String channel,
             @NotNull Player player,
-            @NotNull byte[] message
+            byte @NonNull [] message
     ) {
         if (!SignEditPaper.CHANNEL.equals(channel)) {
             return;
@@ -70,14 +66,14 @@ public final class SignFormattingListener
                 }
             }
 
-            org.bukkit.block.Block block =
-                    player.getWorld().getBlockAt(
-                            payload.pos().getX(),
-                            payload.pos().getY(),
-                            payload.pos().getZ()
-                    );
+            Block block =
+                player.getWorld().getBlockAt(
+                    payload.pos().getX(),
+                    payload.pos().getY(),
+                    payload.pos().getZ()
+                );
 
-            if (!(block.getState() instanceof org.bukkit.block.Sign sign)) {
+            if (!(block.getState() instanceof Sign)) {
                 plugin.getLogger().warning(
                         "Payload position is not a sign: " + payload.pos()
                 );
@@ -98,80 +94,5 @@ public final class SignFormattingListener
 
             e.printStackTrace();
         }
-    }
-
-    private Component createSegment(
-            SignFormattingPayload.FormattedSegment segment
-    ) {
-        Component component = Component.text(segment.text());
-
-        if (segment.color() != 0xFFFFFFFF) {
-            component = component.color(
-                    TextColor.color(segment.color() & 0xFFFFFF)
-            );
-        }
-
-        if (segment.bold()) {
-            component = component.decorate(TextDecoration.BOLD);
-        }
-
-        if (segment.italic()) {
-            component = component.decorate(TextDecoration.ITALIC);
-        }
-
-        if (segment.underlined()) {
-            component = component.decorate(TextDecoration.UNDERLINED);
-        }
-
-        if (segment.strikethrough()) {
-            component = component.decorate(TextDecoration.STRIKETHROUGH);
-        }
-
-        if (segment.obfuscated()) {
-            component = component.decorate(TextDecoration.OBFUSCATED);
-        }
-
-        return component;
-    }
-
-    private Component createLine(
-            SignFormattingPayload.FormattedLine line
-    ) {
-        Component result = Component.empty();
-
-        for (SignFormattingPayload.FormattedSegment segment : line.segments()) {
-            result = result.append(createSegment(segment));
-        }
-
-        return result;
-    }
-
-    private void applyFormatting(
-            Sign sign,
-            SignFormattingPayload payload
-    ) {
-        SignSide side = sign.getSide(
-                payload.front() ? Side.FRONT : Side.BACK
-        );
-
-        for (int i = 0; i < 4; i++) {
-            SignFormattingPayload.FormattedLine line =
-                    payload.lines().get(i);
-
-            side.line(i, createLine(line));
-        }
-
-        if (!sign.update(true, false)) {
-            plugin.getLogger().warning(
-                    "Failed to update sign at " + payload.pos()
-            );
-        }
-
-        plugin.getLogger().info(
-                "[SignEdit] formatting applied to "
-                        + payload.pos()
-        );
-
-
     }
 }

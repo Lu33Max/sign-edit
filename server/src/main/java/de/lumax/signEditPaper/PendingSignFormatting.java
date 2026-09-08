@@ -25,24 +25,6 @@ public final class PendingSignFormatting {
 
     private static final Map<Key, Pending> PENDING = new HashMap<>();
 
-    public static void submitPayload(
-            UUID playerId,
-            SignFormattingPayload payload
-    ) {
-        Key key = new Key(
-                playerId,
-                payload.pos(),
-                payload.front()
-        );
-
-        Pending pending = PENDING.computeIfAbsent(
-                key,
-                ignored -> new Pending()
-        );
-
-        pending.payload = payload;
-    }
-
     public static void vanillaUpdateObserved(
             UUID playerId,
             net.minecraft.core.BlockPos pos,

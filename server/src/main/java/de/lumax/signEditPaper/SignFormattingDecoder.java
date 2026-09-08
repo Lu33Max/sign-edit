@@ -3,7 +3,6 @@ package de.lumax.signEditPaper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
@@ -14,8 +13,8 @@ public final class SignFormattingDecoder {
     private SignFormattingDecoder() {
     }
 
-    private static final StreamCodec<ByteBuf, SignFormattingPayload.FormattedSegment>
-            SEGMENT_CODEC = StreamCodec.composite(
+    private static final StreamCodec<ByteBuf, SignFormattingPayload.FormattedSegment> SEGMENT_CODEC =
+        StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8,
             SignFormattingPayload.FormattedSegment::text,
 
@@ -38,24 +37,24 @@ public final class SignFormattingDecoder {
             SignFormattingPayload.FormattedSegment::color,
 
             SignFormattingPayload.FormattedSegment::new
-    );
+        );
 
-    private static final StreamCodec<ByteBuf, SignFormattingPayload.FormattedLine>
-            LINE_CODEC = StreamCodec.composite(
+    private static final StreamCodec<ByteBuf, SignFormattingPayload.FormattedLine> LINE_CODEC =
+        StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8,
             SignFormattingPayload.FormattedLine::text,
 
             ByteBufCodecs.collection(
-                    ArrayList::new,
-                    SEGMENT_CODEC
+                ArrayList::new,
+                SEGMENT_CODEC
             ),
             SignFormattingPayload.FormattedLine::segments,
 
             SignFormattingPayload.FormattedLine::new
-    );
+        );
 
-    private static final StreamCodec<ByteBuf, SignFormattingPayload>
-            PAYLOAD_CODEC = StreamCodec.composite(
+    private static final StreamCodec<ByteBuf, SignFormattingPayload> PAYLOAD_CODEC =
+        StreamCodec.composite(
             BlockPos.STREAM_CODEC,
             SignFormattingPayload::pos,
 
@@ -69,7 +68,7 @@ public final class SignFormattingDecoder {
             SignFormattingPayload::lines,
 
             SignFormattingPayload::new
-    );
+        );
 
     public static SignFormattingPayload decode(byte[] data) {
         ByteBuf buf = Unpooled.wrappedBuffer(data);

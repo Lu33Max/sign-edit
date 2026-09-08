@@ -31,9 +31,9 @@ public final class SignFormattingServerPaper {
         }
 
         Block block = player.getWorld().getBlockAt(
-                payload.pos().getX(),
-                payload.pos().getY(),
-                payload.pos().getZ()
+            payload.pos().getX(),
+            payload.pos().getY(),
+            payload.pos().getZ()
         );
 
         if (!(block.getState() instanceof Sign sign)) {
@@ -45,15 +45,15 @@ public final class SignFormattingServerPaper {
         }
 
         SignSide side = sign.getSide(
-                payload.front()
-                        ? Side.FRONT
-                        : Side.BACK
+            payload.front()
+                ? Side.FRONT
+                : Side.BACK
         );
 
         for (int i = 0; i < 4; i++) {
             side.line(
-                    i,
-                    createLine(payload.lines().get(i))
+                i,
+                createLine(payload.lines().get(i))
             );
         }
 
@@ -90,39 +90,39 @@ public final class SignFormattingServerPaper {
 
         if (segment.color() != 0xFFFFFFFF) {
             component = component.color(
-                    TextColor.color(
-                            segment.color() & 0xFFFFFF
-                    )
+                TextColor.color(
+                    segment.color() & 0xFFFFFF
+                )
             );
         }
 
         if (segment.bold()) {
             component = component.decorate(
-                    TextDecoration.BOLD
+                TextDecoration.BOLD
             );
         }
 
         if (segment.italic()) {
             component = component.decorate(
-                    TextDecoration.ITALIC
+                TextDecoration.ITALIC
             );
         }
 
         if (segment.underlined()) {
             component = component.decorate(
-                    TextDecoration.UNDERLINED
+                TextDecoration.UNDERLINED
             );
         }
 
         if (segment.strikethrough()) {
             component = component.decorate(
-                    TextDecoration.STRIKETHROUGH
+                TextDecoration.STRIKETHROUGH
             );
         }
 
         if (segment.obfuscated()) {
             component = component.decorate(
-                    TextDecoration.OBFUSCATED
+                TextDecoration.OBFUSCATED
             );
         }
 
