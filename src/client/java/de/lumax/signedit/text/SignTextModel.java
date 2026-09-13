@@ -25,10 +25,6 @@ public class SignTextModel {
         lines[line].setText(text);
     }
 
-    public void setLineText(int index, String text, int editStart, int editEnd) {
-        lines[index].replaceText(text, editStart, editEnd);
-    }
-
     public void setLineText(
             int index,
             String text,
@@ -57,34 +53,6 @@ public class SignTextModel {
         if (line >= 0 && line < lines.length) {
             lines[line].setFormatting(start, end, type, value);
         }
-    }
-
-    public Integer getColorAt(
-            int line,
-            int index
-    ) {
-        if (line < 0 || line >= lines.length) {
-            return null;
-        }
-
-        return lines[line].getColorAt(index);
-    }
-
-    public void toggleFormatting(
-            int line,
-            int start,
-            int end,
-            FormattingType type
-    ) {
-        if (line < 0 || line >= lines.length) {
-            return;
-        }
-
-        lines[line].toggleFormatting(
-                start,
-                end,
-                type
-        );
     }
 
     public void setColor(

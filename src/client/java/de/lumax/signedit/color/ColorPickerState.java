@@ -27,9 +27,9 @@ public class ColorPickerState {
             float saturation,
             float brightness
     ) {
-        this.hue = clamp(hue, 0.0f, 1.0f);
-        this.saturation = clamp(saturation, 0.0f, 1.0f);
-        this.brightness = clamp(brightness, 0.0f, 1.0f);
+        this.hue = Math.clamp(hue, 0.0f, 1.0f);
+        this.saturation = Math.clamp(saturation, 0.0f, 1.0f);
+        this.brightness = Math.clamp(brightness, 0.0f, 1.0f);
     }
 
     public void setRgb(int rgb) {
@@ -73,13 +73,5 @@ public class ColorPickerState {
 
     public int getRgb() {
         return ColorPickerUtil.hsvToRgb(hue, saturation, brightness);
-    }
-
-    private static float clamp(
-            float value,
-            float min,
-            float max
-    ) {
-        return Math.max(min, Math.min(max, value));
     }
 }

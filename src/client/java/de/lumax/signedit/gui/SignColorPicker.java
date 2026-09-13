@@ -1,10 +1,13 @@
-package de.lumax.signedit.color;
+package de.lumax.signedit.gui;
 
+import de.lumax.signedit.color.ColorPickerState;
+import de.lumax.signedit.color.ColorPickerUtil;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 public class SignColorPicker extends AbstractWidget {
 
@@ -47,7 +50,7 @@ public class SignColorPicker extends AbstractWidget {
 
     @Override
     protected void extractWidgetRenderState(
-            GuiGraphicsExtractor graphics,
+            @NonNull GuiGraphicsExtractor graphics,
             int mouseX,
             int mouseY,
             float partialTick
@@ -129,7 +132,7 @@ public class SignColorPicker extends AbstractWidget {
 
     @Override
     protected void updateWidgetNarration(
-            NarrationElementOutput narrationElementOutput
+            @NonNull NarrationElementOutput narrationElementOutput
     ) {
     }
 

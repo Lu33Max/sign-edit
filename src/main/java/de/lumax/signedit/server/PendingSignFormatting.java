@@ -49,7 +49,7 @@ public final class PendingSignFormatting {
 
         ENTRIES.put(
                 key,
-                new Entry(payload, old != null && old.vanillaUpdateObserved)
+                new Entry(payload, false)
         );
 
         System.out.println(

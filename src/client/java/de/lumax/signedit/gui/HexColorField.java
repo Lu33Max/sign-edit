@@ -1,4 +1,4 @@
-package de.lumax.signedit.color;
+package de.lumax.signedit.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;

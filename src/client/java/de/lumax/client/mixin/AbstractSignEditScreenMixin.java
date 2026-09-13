@@ -3,8 +3,8 @@ package de.lumax.client.mixin;
 import de.lumax.signedit.access.SignEditHexFieldAccess;
 import de.lumax.signedit.access.SignEditScreenAccess;
 import de.lumax.signedit.access.TextFieldHelperAccess;
-import de.lumax.signedit.color.HexColorField;
-import de.lumax.signedit.color.SignColorPicker;
+import de.lumax.signedit.gui.HexColorField;
+import de.lumax.signedit.gui.SignColorPicker;
 import de.lumax.signedit.gui.SignEditLayout;
 import de.lumax.signedit.gui.SignFormattingToolbar;
 import de.lumax.signedit.server.SignFormattingPayloadFactory;
@@ -20,7 +20,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
-import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,9 +36,6 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
 
     @Shadow
     private TextFieldHelper signField;
-
-    @Shadow
-    private long cursorBlinkStartTime;
 
     @Shadow
     private int line;
@@ -60,37 +56,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
     private String[] messages;
 
     @Unique
-    @Override
-    public int signedit$getCursorPos() {
-        return this.signField.getCursorPos();
-    }
-
-    @Unique
-    @Override
-    public int signedit$getSelectionPos() {
-        return this.signField.getSelectionPos();
-    }
-
-    @Unique
-    @Override
-    public int signedit$getCurrentLine() {
-        return this.line;
-    }
-
-    @Unique
-    @Override
-    public boolean signedit$isSelecting() {
-        return this.signField.isSelecting();
-    }
-
-    @Unique
     private final SignTextModel signedit$model = new SignTextModel();
-
-    @Unique
-    @Override
-    public SignTextModel signedit$getModel() {
-        return this.signedit$model;
-    }
 
     @Unique
     private TextStyle signedit$activeStyle = TextStyle.EMPTY;
@@ -175,7 +141,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             int charIndex
     ) {
         Minecraft minecraft =
-                ((ScreenInvoker) (Object) this).signedit$getMinecraft();
+                ((ScreenInvoker) this).signedit$getMinecraft();
 
         String text = this.signedit$model
                 .getLine(line)
@@ -409,13 +375,13 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         charIndex = Math.clamp(charIndex, 0, text.length());
 
         int fullWidth = signedit$getFormattedWidth(
-                ((ScreenInvoker) (Object) this).signedit$getMinecraft().font,
+                ((ScreenInvoker) this).signedit$getMinecraft().font,
                 line,
                 text.length()
         );
 
         int prefixWidth = signedit$getFormattedWidth(
-                ((ScreenInvoker) (Object) this).signedit$getMinecraft().font,
+                ((ScreenInvoker) this).signedit$getMinecraft().font,
                 line,
                 charIndex
         );
@@ -477,7 +443,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         }
 
         Minecraft minecraft =
-                ((ScreenInvoker) (Object) this).signedit$getMinecraft();
+                ((ScreenInvoker) this).signedit$getMinecraft();
 
         int fullWidth = this.signedit$getFormattedWidth(
                 minecraft.font,
@@ -521,9 +487,6 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
     @Unique
     private SignFormattingToolbar signedit$toolbar;
 
-        @Unique
-        private SignEditLayout signedit$layout;
-
     @Inject(method = "init", at = @At("TAIL"))
     private void signedit$init(CallbackInfo ci) {
         this.signedit$model.loadFromSignText(
@@ -532,14 +495,14 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         );
 
         AbstractSignEditScreen screen = (AbstractSignEditScreen) (Object) this;
-        this.signedit$layout = SignEditLayout.addTo(
+        SignEditLayout signedit$layout = SignEditLayout.addTo(
                 screen,
                 this,
                 this::signedit$resetColor
         );
-        this.signedit$colorPicker = this.signedit$layout.getColorPicker();
-        this.signedit$hexField = this.signedit$layout.getHexField();
-        this.signedit$toolbar = this.signedit$layout.getToolbar();
+        this.signedit$colorPicker = signedit$layout.getColorPicker();
+        this.signedit$hexField = signedit$layout.getHexField();
+        this.signedit$toolbar = signedit$layout.getToolbar();
     }
 
     @Inject(
@@ -619,7 +582,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             return;
         }
 
-        ((ScreenInvoker) (Object) this).signedit$clearFocus();
+        ((ScreenInvoker) this).signedit$clearFocus();
         this.signedit$clearToolbarFocusAfterClick = false;
     }
 

@@ -17,7 +17,7 @@ import java.util.List;
 public abstract class ServerGamePacketListenerMixin {
 
     @Shadow
-    protected ServerPlayer player;
+    public ServerPlayer player;
 
     @Inject(
             method = "updateSignText",

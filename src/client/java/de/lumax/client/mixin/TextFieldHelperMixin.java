@@ -3,6 +3,7 @@ package de.lumax.client.mixin;
 import de.lumax.signedit.access.TextFieldHelperAccess;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.util.Util;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -16,6 +17,7 @@ import java.util.function.Supplier;
 public abstract class TextFieldHelperMixin
         implements TextFieldHelperAccess {
 
+    @Final
     @Shadow
     private Supplier<String> getMessageFn;
 

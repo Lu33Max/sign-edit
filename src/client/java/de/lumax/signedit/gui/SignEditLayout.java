@@ -2,8 +2,6 @@ package de.lumax.signedit.gui;
 
 import de.lumax.client.mixin.ScreenInvoker;
 import de.lumax.signedit.access.SignEditScreenAccess;
-import de.lumax.signedit.color.HexColorField;
-import de.lumax.signedit.color.SignColorPicker;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 

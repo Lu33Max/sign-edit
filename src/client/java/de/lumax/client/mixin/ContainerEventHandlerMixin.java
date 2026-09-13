@@ -21,7 +21,7 @@ public interface ContainerEventHandlerMixin {
             CallbackInfoReturnable<Boolean> cir
     ) {
         ContainerEventHandler handler =
-                (ContainerEventHandler) (Object) this;
+                (ContainerEventHandler) this;
 
         if (handler instanceof SignEditHexFieldAccess access) {
             access.signedit$handleScreenMouseClick(
@@ -41,7 +41,7 @@ public interface ContainerEventHandlerMixin {
             boolean doubleClick,
             CallbackInfoReturnable<Boolean> cir
     ) {
-        ContainerEventHandler handler = (ContainerEventHandler) (Object) this;
+        ContainerEventHandler handler = (ContainerEventHandler) this;
 
         if (handler instanceof SignEditHexFieldAccess access) {
             access.signedit$finishScreenMouseClick();
