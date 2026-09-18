@@ -1,6 +1,6 @@
 package de.lumax.signedit.gui;
 
-import de.lumax.client.mixin.ScreenInvoker;
+import de.lumax.signedit.mixin.ScreenInvoker;
 import de.lumax.signedit.access.SignEditScreenAccess;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;

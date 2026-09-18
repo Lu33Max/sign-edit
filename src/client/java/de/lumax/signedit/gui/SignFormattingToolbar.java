@@ -1,6 +1,6 @@
 package de.lumax.signedit.gui;
 
-import de.lumax.client.mixin.ScreenInvoker;
+import de.lumax.signedit.mixin.ScreenInvoker;
 import de.lumax.signedit.access.SignEditScreenAccess;
 import de.lumax.signedit.text.FormattingType;
 import de.lumax.signedit.text.TextStyle;

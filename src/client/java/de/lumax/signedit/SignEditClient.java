@@ -1,4 +1,4 @@
-package de.lumax.client;
+package de.lumax.signedit;
 
 import de.lumax.signedit.access.SignEditScreenAccess;
 import de.lumax.signedit.config.SignEditConfig;

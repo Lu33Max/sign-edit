@@ -1,6 +1,6 @@
-package de.lumax.client.mixin;
+package de.lumax.signedit.mixin;
 
-import de.lumax.client.SignEditClient;
+import de.lumax.signedit.SignEditClient;
 import de.lumax.signedit.access.SignEditHexFieldAccess;
 import de.lumax.signedit.access.SignEditScreenAccess;
 import de.lumax.signedit.access.TextFieldHelperAccess;

@@ -1,4 +1,4 @@
-package de.lumax.client.mixin;
+package de.lumax.signedit.mixin;
 
 import de.lumax.signedit.access.SignEditHexFieldAccess;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;

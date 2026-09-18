@@ -2,7 +2,7 @@ package de.lumax.signedit.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import de.lumax.client.SignEditClient;
+import de.lumax.signedit.SignEditClient;
 import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
