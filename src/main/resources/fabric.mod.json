@@ -8,12 +8,13 @@
 		"Lu33Max"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/Lu33Max/sign-edit",
+		"sources": "https://github.com/Lu33Max/sign-edit",
+		"issues": "https://github.com/Lu33Max/sign-edit/issues"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/signedit/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
 		"client": [
 			"de.lumax.signedit.SignEditClient"
@@ -30,7 +31,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.19.5",
-		"minecraft": "~26.2",
+		"minecraft": "26.2",
 		"java": ">=25",
 		"fabric-api": "*"
 	},
