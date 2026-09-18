@@ -3,9 +3,9 @@
 	"id": "signedit",
 	"version": "${version}",
 	"name": "Sign Edit",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Rich text style editor for signs.",
 	"authors": [
-		"Me!"
+		"Lu33Max"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -20,6 +20,9 @@
 		],
 		"client": [
 			"de.lumax.client.SignEditClient"
+		],
+		"modmenu": [
+			"de.lumax.signedit.config.SignEditModMenuApi"
 		]
 	},
 	"mixins": [
@@ -30,9 +33,12 @@
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.19.3",
+		"fabricloader": ">=0.19.5",
 		"minecraft": "~26.2",
 		"java": ">=25",
 		"fabric-api": "*"
+	},
+	"suggests": {
+		"modmenu": "*"
 	}
 }
