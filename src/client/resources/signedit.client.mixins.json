@@ -3,6 +3,8 @@
 	"package": "de.lumax.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
+		"SignEditBackgroundMixin",
+		"HangingSignEditBackgroundMixin",
 		"AbstractSignEditScreenMixin",
 		"ContainerEventHandlerMixin",
 		"ScreenInvoker",

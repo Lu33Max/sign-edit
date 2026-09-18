@@ -1,9 +1,13 @@
 package de.lumax.signedit.text;
 
+import org.jspecify.annotations.Nullable;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.level.block.entity.SignText;
-import org.jspecify.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SignTextModel {
 
@@ -41,6 +45,30 @@ public class SignTextModel {
         }
 
         return lines[line].getStyleAt(index);
+    }
+
+    public void moveLineSuffix(
+            int sourceLine,
+            int startIndex,
+            int targetLine
+    ) {
+        StyledLine source = lines[sourceLine];
+        String sourceText = source.getText();
+        startIndex = Math.clamp(startIndex, 0, sourceText.length());
+
+        String movedText = sourceText.substring(startIndex);
+        List<TextStyle> movedStyles = new ArrayList<>(movedText.length());
+
+        for (int index = startIndex; index < sourceText.length(); index++) {
+            movedStyles.add(source.getStyleAt(index));
+        }
+
+        source.replaceText(
+                sourceText.substring(0, startIndex),
+                startIndex,
+                sourceText.length()
+        );
+        lines[targetLine].insertText(0, movedText, movedStyles);
     }
 
     public void setFormatting(
@@ -122,6 +150,20 @@ public class SignTextModel {
             );
 
             index = segmentEnd;
+        }
+
+        return result;
+    }
+
+    public SignText buildSignText() {
+        SignText result = new SignText();
+
+        for (int line = 0; line < 4; line++) {
+            result = result.setMessage(
+                    line,
+                    buildComponent(line),
+                    buildComponent(line)
+            );
         }
 
         return result;

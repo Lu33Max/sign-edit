@@ -8,7 +8,7 @@ import net.minecraft.client.gui.screens.Screen;
 public final class SignEditLayout {
 
     private static final int PICKER_X_OFFSET = -185;
-    private static final int PICKER_Y_OFFSET = -30;
+    private static final int PICKER_Y_OFFSET = -25;
     private static final int FIELD_GAP = 5;
     private static final int BUTTON_WIDTH = 30;
     private static final int BUTTON_HEIGHT = 20;
@@ -49,6 +49,21 @@ public final class SignEditLayout {
                 }
         );
         colorPickerRef[0] = colorPicker;
+
+        Button sideButton = SignSideButton.create(
+                screen.width / 2 - 55,
+                160,
+                55,
+                BUTTON_HEIGHT,
+                access
+        );
+        Button signTypeButton = SignTypeButton.create(
+                screen.width / 2,
+                160,
+                55,
+                BUTTON_HEIGHT,
+                access
+        );
 
         int fieldX = colorPicker.getX();
         int fieldY = colorPicker.getY() + colorPicker.getHeight() + FIELD_GAP;
@@ -95,6 +110,9 @@ public final class SignEditLayout {
         SignColorPalette.addTo(screen, access, pickerX, paletteY);
 
         invoker.signedit$addRenderableWidget(colorPicker);
+        WoodTypeButtons.addTo(screen, access, 10);
+        invoker.signedit$addRenderableWidget(sideButton);
+        invoker.signedit$addRenderableWidget(signTypeButton);
         invoker.signedit$addRenderableWidget(hexField);
         invoker.signedit$addRenderableWidget(resetButton);
         invoker.signedit$addRenderableWidget(applyButton);

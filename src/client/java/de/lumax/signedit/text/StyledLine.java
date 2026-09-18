@@ -190,6 +190,39 @@ public class StyledLine {
         rebuildRanges(newStyles);
     }
 
+    public void insertText(
+            int index,
+            String insertedText,
+            List<TextStyle> insertedStyles
+    ) {
+        index = Math.clamp(index, 0, text.length());
+
+        if (insertedText.length() != insertedStyles.size()) {
+            throw new IllegalArgumentException(
+                    "Inserted text and styles must have the same length"
+            );
+        }
+
+        List<TextStyle> styles = new ArrayList<>(
+                text.length() + insertedText.length()
+        );
+
+        for (int i = 0; i < index; i++) {
+            styles.add(getStyleAt(i));
+        }
+
+        styles.addAll(insertedStyles);
+
+        for (int i = index; i < text.length(); i++) {
+            styles.add(getStyleAt(i));
+        }
+
+        text = text.substring(0, index)
+                + insertedText
+                + text.substring(index);
+        rebuildRanges(styles);
+    }
+
     public TextStyle getStyleAt(int index) {
         TextStyle result = TextStyle.EMPTY;
 
