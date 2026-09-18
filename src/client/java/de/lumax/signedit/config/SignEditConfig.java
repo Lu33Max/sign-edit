@@ -21,7 +21,10 @@ public final class SignEditConfig {
             .resolve("config")
             .resolve("signedit.json");
 
-    private static AutoLineBreakMode autoLineBreakMode = AutoLineBreakMode.OFF;
+    public static final boolean DEFAULT_WRAP_TO_FIRST_LINE = false;
+
+    private static AutoLineBreakMode autoLineBreakMode = AutoLineBreakMode.DEFAULT;
+    private static boolean wrapToFirstLine = DEFAULT_WRAP_TO_FIRST_LINE;
 
     private SignEditConfig() {
     }
@@ -35,6 +38,15 @@ public final class SignEditConfig {
         save();
     }
 
+    public static boolean isWrapToFirstLineEnabled() {
+        return wrapToFirstLine;
+    }
+
+    public static void setWrapToFirstLineEnabled(boolean enabled) {
+        wrapToFirstLine = enabled;
+        save();
+    }
+
     public static void load() {
         if (!Files.exists(PATH)) {
             return;
@@ -43,8 +55,12 @@ public final class SignEditConfig {
         try (var reader = Files.newBufferedReader(PATH)) {
             ConfigData data = GSON.fromJson(reader, ConfigData.class);
 
-            if (data != null && data.autoLineBreakMode != null) {
-                autoLineBreakMode = data.autoLineBreakMode;
+            if (data != null) {
+                if (data.autoLineBreakMode != null) {
+                    autoLineBreakMode = data.autoLineBreakMode;
+                }
+
+                wrapToFirstLine = data.wrapToFirstLine;
             }
         } catch (IOException | com.google.gson.JsonParseException exception) {
             LOGGER.error("Failed to load Sign Edit configuration from {}", PATH, exception);
@@ -56,13 +72,13 @@ public final class SignEditConfig {
             Files.createDirectories(PATH.getParent());
 
             try (var writer = Files.newBufferedWriter(PATH)) {
-                GSON.toJson(new ConfigData(autoLineBreakMode), writer);
+                GSON.toJson(new ConfigData(autoLineBreakMode, wrapToFirstLine), writer);
             }
         } catch (IOException exception) {
             LOGGER.error("Failed to save Sign Edit configuration to {}", PATH, exception);
         }
     }
 
-    private record ConfigData(AutoLineBreakMode autoLineBreakMode) {
+    private record ConfigData(AutoLineBreakMode autoLineBreakMode, boolean wrapToFirstLine) {
     }
 }

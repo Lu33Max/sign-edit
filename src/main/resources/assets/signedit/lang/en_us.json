@@ -1,9 +1,11 @@
 {
   "key.signedit.open_editor": "Open Sign Editor",
   "signedit.config.title": "Sign Edit Settings",
+  "signedit.config.category.editing": "Editing",
   "signedit.config.automatic_line_break": "Automatic line break",
   "signedit.config.automatic_line_break.off": "Off",
   "signedit.config.automatic_line_break.jump": "Jump",
   "signedit.config.automatic_line_break.move_word": "Word-wrap",
+  "signedit.config.wrap_to_first_line": "Loop back to first line",
   "gui.done": "Done"
 }

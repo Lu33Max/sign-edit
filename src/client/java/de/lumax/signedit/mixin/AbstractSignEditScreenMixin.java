@@ -844,10 +844,14 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             net.minecraft.client.input.CharacterEvent event,
             CallbackInfoReturnable<Boolean> cir
     ) {
+        boolean isLastLine = this.signedit$lineBeforeCharacterInput
+                >= this.messages.length - 1;
+        boolean canAdvance = !isLastLine
+                || SignEditConfig.isWrapToFirstLineEnabled();
+
         if (SignEditConfig.getAutoLineBreakMode() == AutoLineBreakMode.OFF
                 || !event.isAllowedChatCharacter()
-                || this.signedit$lineBeforeCharacterInput
-                >= this.messages.length - 1
+                || !canAdvance
                 || this.line != this.signedit$lineBeforeCharacterInput
                 || !this.messages[this.line].equals(
                         this.signedit$messageBeforeCharacterInput
@@ -861,7 +865,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
 
     @Unique
     private void signedit$advanceLine(String currentLine) {
-        int nextLine = this.line + 1;
+        int nextLine = (this.line + 1) % this.messages.length;
         int cursorPosition = 0;
 
         if (SignEditConfig.getAutoLineBreakMode()

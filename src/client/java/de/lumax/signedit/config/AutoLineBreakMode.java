@@ -7,6 +7,8 @@ public enum AutoLineBreakMode {
     JUMP_TO_NEXT_LINE("signedit.config.automatic_line_break.jump"),
     MOVE_WORD_TO_NEXT_LINE("signedit.config.automatic_line_break.move_word");
 
+    public static final AutoLineBreakMode DEFAULT = OFF;
+
     private final String translationKey;
 
     AutoLineBreakMode(String translationKey) {
