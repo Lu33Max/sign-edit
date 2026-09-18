@@ -560,32 +560,6 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         );
     }
 
-    @Unique
-    private int signedit$getTextX(
-            int line,
-            int charIndex
-    ) {
-        String text = this.signedit$model
-                .getLine(line)
-                .getText();
-
-        charIndex = Math.clamp(charIndex, 0, text.length());
-
-        int fullWidth = signedit$getFormattedWidth(
-                ((ScreenInvoker) this).signedit$getMinecraft().font,
-                line,
-                text.length()
-        );
-
-        int prefixWidth = signedit$getFormattedWidth(
-                ((ScreenInvoker) this).signedit$getMinecraft().font,
-                line,
-                charIndex
-        );
-
-        return prefixWidth - fullWidth / 2;
-    }
-
     @Redirect(
             method = "extractSignText",
             at = @At(

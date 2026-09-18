@@ -27,81 +27,12 @@ public class StyledLine {
         this.text = text;
     }
 
-    public List<StyleRange> getRanges() {
-        return ranges;
-    }
-
     public void clearStyles() {
         ranges.clear();
     }
 
     public void addRange(StyleRange range) {
         ranges.add(range);
-    }
-
-    public void toggleFormatting(
-            int start,
-            int end,
-            FormattingType type
-    ) {
-        if (start < 0 || end > text.length() || start >= end) {
-            return;
-        }
-
-        boolean allEnabled = true;
-
-        for (int i = start; i < end; i++) {
-            if (!getStyleAt(i).withFormatting(type, true).equals(getStyleAt(i))) {
-                allEnabled = false;
-                break;
-            }
-        }
-
-        boolean newValue = !allEnabled;
-
-        List<StyleRange> newRanges = new ArrayList<>();
-
-        for (int i = 0; i < text.length(); i++) {
-            TextStyle style = getStyleAt(i);
-
-            if (i >= start && i < end) {
-                style = style.withFormatting(type, newValue);
-            }
-
-            if (style.equals(TextStyle.EMPTY)) {
-                continue;
-            }
-
-            if (!newRanges.isEmpty()) {
-                StyleRange previous = newRanges.getLast();
-
-                if (previous.end() == i
-                        && previous.style().equals(style)) {
-
-                    newRanges.set(
-                            newRanges.size() - 1,
-                            new StyleRange(
-                                    previous.start(),
-                                    i + 1,
-                                    style
-                            )
-                    );
-
-                    continue;
-                }
-            }
-
-            newRanges.add(
-                    new StyleRange(
-                            i,
-                            i + 1,
-                            style
-                    )
-            );
-        }
-
-        ranges.clear();
-        ranges.addAll(newRanges);
     }
 
     public void setFormatting(
@@ -233,14 +164,6 @@ public class StyledLine {
         }
 
         return result;
-    }
-
-    public Integer getColorAt(int index) {
-        if (index < 0 || index >= text.length()) {
-            return null;
-        }
-
-        return getStyleAt(index).color();
     }
 
     public void setColor(

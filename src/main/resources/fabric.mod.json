@@ -15,9 +15,6 @@
 	"icon": "assets/sign-edit/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"main": [
-			"de.lumax.signedit.SignEdit"
-		],
 		"client": [
 			"de.lumax.client.SignEditClient"
 		],
@@ -26,7 +23,6 @@
 		]
 	},
 	"mixins": [
-		"signedit.mixins.json",
 		{
 			"config": "signedit.client.mixins.json",
 			"environment": "client"

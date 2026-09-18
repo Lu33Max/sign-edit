@@ -142,12 +142,6 @@ public class SignColorPicker extends AbstractWidget {
         int x = getX();
         int y = getY();
 
-        int hueColor = ColorPickerUtil.hsvToRgb(
-                state.getHue(),
-                1.0f,
-                1.0f
-        );
-
         // Horizontales Weiß → Hue
         for (int px = 0; px < SQUARE_SIZE; px++) {
 

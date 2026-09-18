@@ -223,7 +223,4 @@ public class SignTextModel {
         );
     }
 
-    public StyledLine[] getLines() {
-        return lines;
-    }
 }
