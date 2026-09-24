@@ -1,5 +1,7 @@
 {
   "key.signedit.open_editor": "Open Sign Editor",
+  "signedit.config.open": "Settings",
+  "signedit.config.tooltip": "Sign Edit Config",
   "signedit.config.title": "Sign Edit Settings",
   "signedit.config.category.editing": "Editing",
   "signedit.config.automatic_line_break": "Automatic line break",

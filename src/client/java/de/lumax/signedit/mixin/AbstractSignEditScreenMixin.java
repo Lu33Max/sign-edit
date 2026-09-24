@@ -6,9 +6,11 @@ import de.lumax.signedit.access.SignEditScreenAccess;
 import de.lumax.signedit.access.TextFieldHelperAccess;
 import de.lumax.signedit.config.AutoLineBreakMode;
 import de.lumax.signedit.config.SignEditConfig;
+import de.lumax.signedit.config.SignEditConfigScreen;
 import de.lumax.signedit.gui.HexColorField;
 import de.lumax.signedit.gui.SignColorPicker;
 import de.lumax.signedit.gui.SignEditLayout;
+import de.lumax.signedit.gui.SignEditSettingsButton;
 import de.lumax.signedit.gui.SignFormattingToolbar;
 import de.lumax.signedit.item.SignItemFactory;
 import de.lumax.signedit.text.FormattingType;
@@ -665,6 +667,15 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
 
     @Inject(method = "init", at = @At("TAIL"))
     private void signedit$init(CallbackInfo ci) {
+        AbstractSignEditScreen screen = (AbstractSignEditScreen) (Object) this;
+        ((ScreenInvoker) this).signedit$addRenderableWidget(new SignEditSettingsButton(
+                4,
+                4,
+                () -> ((ScreenInvoker) this).signedit$getMinecraft().gui.setScreen(
+                        new SignEditConfigScreen(screen)
+                )
+        ));
+
         if (!this.signedit$customScreen) {
             return;
         }
@@ -686,7 +697,6 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         this.signedit$selectedWoodType = this.woodType;
         this.signedit$initialWoodType = this.woodType;
 
-        AbstractSignEditScreen screen = (AbstractSignEditScreen) (Object) this;
         SignEditLayout signedit$layout = SignEditLayout.addTo(
                 screen,
                 this,
