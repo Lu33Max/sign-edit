@@ -27,6 +27,7 @@ public interface SignEditScreenAccess {
             SignText initialFrontText,
             SignText initialBackText,
             WoodType initialWoodType,
+            boolean initialHangingSign,
             SignText wideFrontText,
             SignText wideBackText
     );

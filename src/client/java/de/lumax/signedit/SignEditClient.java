@@ -47,7 +47,17 @@ public class SignEditClient implements ClientModInitializer {
             sign.setLevel(client.level);
         }
 
-        openEditor(client, sign, front, null, null, null, null, null);
+        openEditor(
+                client,
+                sign,
+                front,
+                null,
+                null,
+                null,
+                sign instanceof HangingSignBlockEntity,
+                null,
+                null
+        );
     }
 
     public static void openEditor(
@@ -57,6 +67,7 @@ public class SignEditClient implements ClientModInitializer {
             SignText initialFrontText,
             SignText initialBackText,
             WoodType initialWoodType,
+            boolean initialHangingSign,
             SignText wideFrontText,
             SignText wideBackText
     ) {
@@ -72,6 +83,7 @@ public class SignEditClient implements ClientModInitializer {
                     initialFrontText,
                     initialBackText,
                     initialWoodType,
+                    initialHangingSign,
                     wideFrontText,
                     wideBackText
             );

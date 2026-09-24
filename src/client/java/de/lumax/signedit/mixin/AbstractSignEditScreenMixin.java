@@ -72,6 +72,8 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
     @Unique
     private WoodType signedit$initialWoodType;
     @Unique
+    private boolean signedit$initialHangingSign;
+    @Unique
     private TextStyle signedit$activeStyle = TextStyle.EMPTY;
     @Unique
     private boolean signedit$clearToolbarFocusAfterClick;
@@ -167,12 +169,14 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             SignText initialFrontText,
             SignText initialBackText,
             WoodType initialWoodType,
+            boolean initialHangingSign,
             SignText wideFrontText,
             SignText wideBackText
     ) {
         this.signedit$initialFrontText = initialFrontText;
         this.signedit$initialBackText = initialBackText;
         this.signedit$initialWoodType = initialWoodType;
+        this.signedit$initialHangingSign = initialHangingSign;
         this.signedit$wideFrontText = wideFrontText;
         this.signedit$wideBackText = wideBackText;
     }
@@ -229,6 +233,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
                 this.signedit$initialFrontText,
                 this.signedit$initialBackText,
                 this.signedit$initialWoodType,
+                this.signedit$initialHangingSign,
                 wideFrontText,
                 wideBackText
         );
@@ -696,6 +701,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         this.signedit$wideBackText = this.signedit$initialBackText;
         this.signedit$selectedWoodType = this.woodType;
         this.signedit$initialWoodType = this.woodType;
+        this.signedit$initialHangingSign = this.signedit$isHangingSign();
 
         SignEditLayout signedit$layout = SignEditLayout.addTo(
                 screen,
@@ -923,7 +929,8 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         if (signedit$isEmpty(finalFrontText, finalBackText)
                 || (signedit$textEquals(this.signedit$initialFrontText, finalFrontText)
                 && signedit$textEquals(this.signedit$initialBackText, finalBackText)
-                && this.signedit$initialWoodType == this.signedit$selectedWoodType)) {
+                && this.signedit$initialWoodType == this.signedit$selectedWoodType
+                && this.signedit$initialHangingSign == this.signedit$isHangingSign())) {
             return;
         }
 
