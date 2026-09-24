@@ -1,7 +1,7 @@
 package de.lumax.signedit.gui;
 
-import de.lumax.signedit.mixin.ScreenInvoker;
 import de.lumax.signedit.access.SignEditScreenAccess;
+import de.lumax.signedit.mixin.ScreenInvoker;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -77,9 +77,9 @@ public final class SignEditLayout {
                     colorPicker.setColor(color);
                     access.signedit$selectColor(color);
                 },
-                    () -> invoker.signedit$setInitialFocus(hexFieldRef[0])
+                () -> invoker.signedit$setInitialFocus(hexFieldRef[0])
         );
-            hexFieldRef[0] = hexField;
+        hexFieldRef[0] = hexField;
 
         Button resetButton = ResetColorButton.create(
                 fieldX + hexField.getWidth(),
@@ -100,10 +100,10 @@ public final class SignEditLayout {
         int toolbarX = pickerX + 1;
         int toolbarY = fieldY + hexField.getHeight() + FIELD_GAP;
         SignFormattingToolbar toolbar = SignFormattingToolbar.addTo(
-            screen,
-            access,
-            toolbarX,
-            toolbarY
+                screen,
+                access,
+                toolbarX,
+                toolbarY
         );
 
         int paletteY = pickerY - 33;

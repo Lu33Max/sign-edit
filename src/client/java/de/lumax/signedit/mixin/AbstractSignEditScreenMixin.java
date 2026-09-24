@@ -11,8 +11,8 @@ import de.lumax.signedit.gui.SignColorPicker;
 import de.lumax.signedit.gui.SignEditLayout;
 import de.lumax.signedit.gui.SignFormattingToolbar;
 import de.lumax.signedit.item.SignItemFactory;
-import de.lumax.signedit.text.SignTextModel;
 import de.lumax.signedit.text.FormattingType;
+import de.lumax.signedit.text.SignTextModel;
 import de.lumax.signedit.text.TextStyle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -21,17 +21,13 @@ import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.HangingSignBlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -42,211 +38,226 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AbstractSignEditScreen.class)
 public abstract class AbstractSignEditScreenMixin implements SignEditScreenAccess, SignEditHexFieldAccess {
 
-    @Shadow
-    private TextFieldHelper signField;
-
-    @Shadow
-    private int line;
-
-    @Shadow
-    private SignText text;
-
-        @Unique
-        private boolean signedit$transitioningScreen;
-
+    @Unique
+    private final SignTextModel signedit$model = new SignTextModel();
     @Final
     @Shadow
     protected SignBlockEntity sign;
-
-        @Mutable
-        @Final
+    @Shadow
+    protected WoodType woodType;
+    @Shadow
+    private TextFieldHelper signField;
+    @Shadow
+    private int line;
+    @Shadow
+    private SignText text;
+    @Unique
+    private boolean signedit$transitioningScreen;
+    @Mutable
+    @Final
     @Shadow
     private boolean isFrontText;
-
-        @Mutable
+    @Mutable
     @Final
     @Shadow
     private String[] messages;
-
-        @Shadow
-        protected WoodType woodType;
+    @Unique
+    private boolean signedit$customScreen;
 
     @Unique
-    private final SignTextModel signedit$model = new SignTextModel();
+    private WoodType signedit$selectedWoodType;
 
-        @Unique
-        private boolean signedit$customScreen;
-
-        @Unique
-        private WoodType signedit$selectedWoodType;
-
-        @Unique
-        private WoodType signedit$initialWoodType;
-
-        @Override
-        public boolean signedit$isCustomScreen() {
-                return this.signedit$customScreen;
-        }
-
-        @Override
-        public void signedit$setCustomScreen(boolean customScreen) {
-                this.signedit$customScreen = customScreen;
-        }
-
-        @Override
-        public WoodType signedit$getWoodType() {
-                return this.signedit$selectedWoodType;
-        }
-
-        @Override
-        public void signedit$cycleWoodType(int direction) {
-                WoodType[] types = SignItemFactory.availableWoodTypes(
-                        this.sign instanceof HangingSignBlockEntity
-                ).toArray(WoodType[]::new);
-                int current = 0;
-
-                for (int index = 0; index < types.length; index++) {
-                        if (types[index] == this.signedit$selectedWoodType) {
-                                current = index;
-                                break;
-                        }
-                }
-
-                int next = Math.floorMod(current + direction, types.length);
-                this.signedit$selectedWoodType = types[next];
-        }
-
-        @Override
-        public boolean signedit$isFrontText() {
-                return this.isFrontText;
-        }
-
-        @Override
-        public void signedit$toggleTextSide() {
-                this.sign.setText(this.signedit$model.buildSignText(), this.isFrontText);
-                this.isFrontText = !this.isFrontText;
-                this.text = this.sign.getText(this.isFrontText);
-
-                for (int line = 0; line < this.messages.length; line++) {
-                        this.messages[line] = this.text.getMessage(line, false).getString();
-                }
-
-                this.signedit$model.loadFromSignText(this.text, false);
-                this.line = 0;
-                this.signField.setCursorToEnd();
-                this.signedit$activeStyle = TextStyle.EMPTY;
-                this.signedit$updateToolbar();
-        }
-
-                @Override
-                public boolean signedit$isHangingSign() {
-                        return this.sign instanceof HangingSignBlockEntity;
-                }
-
-                @Override
-                public void signedit$setSessionState(
-                        SignText initialFrontText,
-                        SignText initialBackText,
-                        WoodType initialWoodType,
-                        SignText wideFrontText,
-                        SignText wideBackText
-                ) {
-                        this.signedit$initialFrontText = initialFrontText;
-                        this.signedit$initialBackText = initialBackText;
-                        this.signedit$initialWoodType = initialWoodType;
-                        this.signedit$wideFrontText = wideFrontText;
-                        this.signedit$wideBackText = wideBackText;
-                }
-
-                @Override
-                public void signedit$toggleSignType() {
-                        this.sign.setText(this.signedit$model.buildSignText(), this.isFrontText);
-
-                        boolean targetHanging = !this.signedit$isHangingSign();
-                        SignText currentFrontText = this.sign.getFrontText();
-                        SignText currentBackText = this.sign.getBackText();
-                        SignText wideFrontText = targetHanging
-                                ? currentFrontText
-                                : this.signedit$wideFrontText;
-                        SignText wideBackText = targetHanging
-                                ? currentBackText
-                                : this.signedit$wideBackText;
-                        SignText targetFrontText = targetHanging
-                                ? currentFrontText
-                                : signedit$restoreWideLines(
-                                        currentFrontText,
-                                        this.signedit$formInitialFrontText,
-                                        wideFrontText
-                                );
-                        SignText targetBackText = targetHanging
-                                ? currentBackText
-                                : signedit$restoreWideLines(
-                                        currentBackText,
-                                        this.signedit$formInitialBackText,
-                                        wideBackText
-                                );
-
-                        Block targetBlock = SignItemFactory.getSignBlock(
-                                this.signedit$selectedWoodType,
-                                targetHanging
-                        );
-                        if (targetBlock == null) {
-                                return;
-                        }
-
-                        BlockState targetState = targetBlock.defaultBlockState();
-                        SignBlockEntity targetSign = targetHanging
-                                ? new HangingSignBlockEntity(this.sign.getBlockPos(), targetState)
-                                : new SignBlockEntity(this.sign.getBlockPos(), targetState);
-                        targetSign.setLevel(this.sign.getLevel());
-                        targetSign.setText(targetFrontText, true);
-                        targetSign.setText(targetBackText, false);
-
-                        this.signedit$transitioningScreen = true;
-                        SignEditClient.openEditor(
-                                ((ScreenInvoker) this).signedit$getMinecraft(),
-                                targetSign,
-                                this.isFrontText,
-                                this.signedit$initialFrontText,
-                                this.signedit$initialBackText,
-                                this.signedit$initialWoodType,
-                                wideFrontText,
-                                wideBackText
-                        );
-                }
-
-                @Unique
-                private SignText signedit$restoreWideLines(
-                        SignText currentText,
-                        SignText formInitialText,
-                        SignText wideText
-                ) {
-                        SignText result = currentText;
-
-                        for (int line = 0; line < SignText.LINES; line++) {
-                                if (signedit$lineEquals(currentText, formInitialText, line)) {
-                                        result = result.setMessage(
-                                                line,
-                                                wideText.getMessage(line, false),
-                                                wideText.getMessage(line, true)
-                                        );
-                                }
-                        }
-
-                        return result;
-                }
-
-                @Unique
-                private boolean signedit$lineEquals(SignText first, SignText second, int line) {
-                        return first.getMessage(line, false).equals(second.getMessage(line, false))
-                                && first.getMessage(line, true).equals(second.getMessage(line, true));
-                }
-
+    @Unique
+    private WoodType signedit$initialWoodType;
     @Unique
     private TextStyle signedit$activeStyle = TextStyle.EMPTY;
-
     @Unique
     private boolean signedit$clearToolbarFocusAfterClick;
+    @Unique
+    private int signedit$lastCursorPos = -1;
+    @Unique
+    private int signedit$lastLine = -1;
+    @Unique
+    private SignColorPicker signedit$colorPicker;
+    @Unique
+    private HexColorField signedit$hexField;
+    @Unique
+    private SignFormattingToolbar signedit$toolbar;
+    @Unique
+    private SignText signedit$initialFrontText;
+    @Unique
+    private SignText signedit$initialBackText;
+    @Unique
+    private SignText signedit$formInitialFrontText;
+    @Unique
+    private SignText signedit$formInitialBackText;
+    @Unique
+    private SignText signedit$wideFrontText;
+    @Unique
+    private SignText signedit$wideBackText;
+    @Unique
+    private int signedit$lineBeforeCharacterInput;
+    @Unique
+    private String signedit$messageBeforeCharacterInput;
+
+    @Override
+    public boolean signedit$isCustomScreen() {
+        return this.signedit$customScreen;
+    }
+
+    @Override
+    public void signedit$setCustomScreen(boolean customScreen) {
+        this.signedit$customScreen = customScreen;
+    }
+
+    @Override
+    public WoodType signedit$getWoodType() {
+        return this.signedit$selectedWoodType;
+    }
+
+    @Override
+    public void signedit$cycleWoodType(int direction) {
+        WoodType[] types = SignItemFactory.availableWoodTypes(
+                this.sign instanceof HangingSignBlockEntity
+        ).toArray(WoodType[]::new);
+        int current = 0;
+
+        for (int index = 0; index < types.length; index++) {
+            if (types[index] == this.signedit$selectedWoodType) {
+                current = index;
+                break;
+            }
+        }
+
+        int next = Math.floorMod(current + direction, types.length);
+        this.signedit$selectedWoodType = types[next];
+    }
+
+    @Override
+    public boolean signedit$isFrontText() {
+        return this.isFrontText;
+    }
+
+    @Override
+    public void signedit$toggleTextSide() {
+        this.sign.setText(this.signedit$model.buildSignText(), this.isFrontText);
+        this.isFrontText = !this.isFrontText;
+        this.text = this.sign.getText(this.isFrontText);
+
+        for (int line = 0; line < this.messages.length; line++) {
+            this.messages[line] = this.text.getMessage(line, false).getString();
+        }
+
+        this.signedit$model.loadFromSignText(this.text, false);
+        this.line = 0;
+        this.signField.setCursorToEnd();
+        this.signedit$activeStyle = TextStyle.EMPTY;
+        this.signedit$updateToolbar();
+    }
+
+    @Override
+    public boolean signedit$isHangingSign() {
+        return this.sign instanceof HangingSignBlockEntity;
+    }
+
+    @Override
+    public void signedit$setSessionState(
+            SignText initialFrontText,
+            SignText initialBackText,
+            WoodType initialWoodType,
+            SignText wideFrontText,
+            SignText wideBackText
+    ) {
+        this.signedit$initialFrontText = initialFrontText;
+        this.signedit$initialBackText = initialBackText;
+        this.signedit$initialWoodType = initialWoodType;
+        this.signedit$wideFrontText = wideFrontText;
+        this.signedit$wideBackText = wideBackText;
+    }
+
+    @Override
+    public void signedit$toggleSignType() {
+        this.sign.setText(this.signedit$model.buildSignText(), this.isFrontText);
+
+        boolean targetHanging = !this.signedit$isHangingSign();
+        SignText currentFrontText = this.sign.getFrontText();
+        SignText currentBackText = this.sign.getBackText();
+        SignText wideFrontText = targetHanging
+                ? currentFrontText
+                : this.signedit$wideFrontText;
+        SignText wideBackText = targetHanging
+                ? currentBackText
+                : this.signedit$wideBackText;
+        SignText targetFrontText = targetHanging
+                ? currentFrontText
+                : signedit$restoreWideLines(
+                currentFrontText,
+                this.signedit$formInitialFrontText,
+                wideFrontText
+        );
+        SignText targetBackText = targetHanging
+                ? currentBackText
+                : signedit$restoreWideLines(
+                currentBackText,
+                this.signedit$formInitialBackText,
+                wideBackText
+        );
+
+        Block targetBlock = SignItemFactory.getSignBlock(
+                this.signedit$selectedWoodType,
+                targetHanging
+        );
+        if (targetBlock == null) {
+            return;
+        }
+
+        BlockState targetState = targetBlock.defaultBlockState();
+        SignBlockEntity targetSign = targetHanging
+                ? new HangingSignBlockEntity(this.sign.getBlockPos(), targetState)
+                : new SignBlockEntity(this.sign.getBlockPos(), targetState);
+        targetSign.setLevel(this.sign.getLevel());
+        targetSign.setText(targetFrontText, true);
+        targetSign.setText(targetBackText, false);
+
+        this.signedit$transitioningScreen = true;
+        SignEditClient.openEditor(
+                ((ScreenInvoker) this).signedit$getMinecraft(),
+                targetSign,
+                this.isFrontText,
+                this.signedit$initialFrontText,
+                this.signedit$initialBackText,
+                this.signedit$initialWoodType,
+                wideFrontText,
+                wideBackText
+        );
+    }
+
+    @Unique
+    private SignText signedit$restoreWideLines(
+            SignText currentText,
+            SignText formInitialText,
+            SignText wideText
+    ) {
+        SignText result = currentText;
+
+        for (int line = 0; line < SignText.LINES; line++) {
+            if (signedit$lineEquals(currentText, formInitialText, line)) {
+                result = result.setMessage(
+                        line,
+                        wideText.getMessage(line, false),
+                        wideText.getMessage(line, true)
+                );
+            }
+        }
+
+        return result;
+    }
+
+    @Unique
+    private boolean signedit$lineEquals(SignText first, SignText second, int line) {
+        return first.getMessage(line, false).equals(second.getMessage(line, false))
+                && first.getMessage(line, true).equals(second.getMessage(line, true));
+    }
 
     @Unique
     @Override
@@ -309,7 +320,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
     }
 
     @Unique
-    public void signedit$resetColor(){
+    public void signedit$resetColor() {
         int cursor = this.signField.getCursorPos();
         int selection = this.signField.getSelectionPos();
         int start = Math.min(cursor, selection);
@@ -396,12 +407,6 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
     }
 
     @Unique
-    private int signedit$lastCursorPos = -1;
-
-    @Unique
-    private int signedit$lastLine = -1;
-
-    @Unique
     private void signedit$updateFormattingFromCursor() {
         int cursor = this.signField.getCursorPos();
         int line = this.line;
@@ -473,9 +478,9 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             index = 2
     )
     private int signedit$appendCursorX(int x) {
-                if (!this.signedit$customScreen) {
-                        return x;
-                }
+        if (!this.signedit$customScreen) {
+            return x;
+        }
 
         return signedit$getFormattedTextX(
                 this.line,
@@ -492,9 +497,9 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             index = 1
     )
     private int signedit$insertCursorX(int x) {
-                if (!this.signedit$customScreen) {
-                        return x;
-                }
+        if (!this.signedit$customScreen) {
+            return x;
+        }
 
         return signedit$getFormattedTextX(
                 this.line,
@@ -518,10 +523,10 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             int color,
             boolean dropShadow
     ) {
-                if (!this.signedit$customScreen) {
-                        graphics.text(font, str, x, y, color, dropShadow);
-                        return;
-                }
+        if (!this.signedit$customScreen) {
+            graphics.text(font, str, x, y, color, dropShadow);
+            return;
+        }
 
         signedit$updateFormattingFromCursor();
 
@@ -572,9 +577,9 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             Font font,
             String text
     ) {
-                if (!this.signedit$customScreen) {
-                        return font.width(text);
-                }
+        if (!this.signedit$customScreen) {
+            return font.width(text);
+        }
 
         return signedit$getFormattedWidth(
                 font,
@@ -598,10 +603,10 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
             int toY,
             boolean render
     ) {
-                if (!this.signedit$customScreen) {
-                        graphics.textHighlight(fromX, fromY, toX, toY, render);
-                        return;
-                }
+        if (!this.signedit$customScreen) {
+            graphics.textHighlight(fromX, fromY, toX, toY, render);
+            return;
+        }
 
         int line = this.line;
 
@@ -658,38 +663,11 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         );
     }
 
-    @Unique
-    private SignColorPicker signedit$colorPicker;
-
-    @Unique
-    private HexColorField signedit$hexField;
-
-    @Unique
-    private SignFormattingToolbar signedit$toolbar;
-
-        @Unique
-        private SignText signedit$initialFrontText;
-
-        @Unique
-        private SignText signedit$initialBackText;
-
-        @Unique
-        private SignText signedit$formInitialFrontText;
-
-        @Unique
-        private SignText signedit$formInitialBackText;
-
-        @Unique
-        private SignText signedit$wideFrontText;
-
-        @Unique
-        private SignText signedit$wideBackText;
-
     @Inject(method = "init", at = @At("TAIL"))
     private void signedit$init(CallbackInfo ci) {
-                if (!this.signedit$customScreen) {
-                        return;
-                }
+        if (!this.signedit$customScreen) {
+            return;
+        }
 
         this.signedit$model.loadFromSignText(
                 this.text,
@@ -802,9 +780,9 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
 
     @Inject(method = "setMessage", at = @At("TAIL"))
     private void signedit$setMessage(String message, CallbackInfo ci) {
-                if (!this.signedit$customScreen) {
-                        return;
-                }
+        if (!this.signedit$customScreen) {
+            return;
+        }
 
         this.signedit$applyPendingEdit(message);
 
@@ -823,12 +801,6 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
                 this.isFrontText
         );
     }
-
-    @Unique
-    private int signedit$lineBeforeCharacterInput;
-
-    @Unique
-    private String signedit$messageBeforeCharacterInput;
 
     @Inject(method = "charTyped", at = @At("HEAD"))
     private void signedit$recordCharacterInput(
@@ -854,8 +826,8 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
                 || !canAdvance
                 || this.line != this.signedit$lineBeforeCharacterInput
                 || !this.messages[this.line].equals(
-                        this.signedit$messageBeforeCharacterInput
-                )) {
+                this.signedit$messageBeforeCharacterInput
+        )) {
             return;
         }
 
@@ -914,15 +886,15 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         return 0;
     }
 
-        @Inject(method = "removed", at = @At("HEAD"))
-        private void signedit$removed(CallbackInfo ci) {
-                if (!this.signedit$customScreen) {
-                        return;
-                }
+    @Inject(method = "removed", at = @At("HEAD"))
+    private void signedit$removed(CallbackInfo ci) {
+        if (!this.signedit$customScreen) {
+            return;
+        }
 
-                if (this.signedit$transitioningScreen) {
-                        return;
-                }
+        if (this.signedit$transitioningScreen) {
+            return;
+        }
 
         Minecraft minecraft = ((ScreenInvoker) this).signedit$getMinecraft();
 
@@ -938,12 +910,12 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
                 ? this.sign.getBackText()
                 : editedText;
 
-                if (signedit$isEmpty(finalFrontText, finalBackText)
-                                || (signedit$textEquals(this.signedit$initialFrontText, finalFrontText)
-                                && signedit$textEquals(this.signedit$initialBackText, finalBackText)
-                                && this.signedit$initialWoodType == this.signedit$selectedWoodType)) {
-                        return;
-                }
+        if (signedit$isEmpty(finalFrontText, finalBackText)
+                || (signedit$textEquals(this.signedit$initialFrontText, finalFrontText)
+                && signedit$textEquals(this.signedit$initialBackText, finalBackText)
+                && this.signedit$initialWoodType == this.signedit$selectedWoodType)) {
+            return;
+        }
 
         SignText originalOtherSide = this.sign.getText(!this.isFrontText);
         SignText frontText = this.isFrontText
@@ -960,7 +932,7 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
                 backText
         );
 
-                int slot = signedit$getInventorySlot(minecraft);
+        int slot = signedit$getInventorySlot(minecraft);
 
         minecraft.player.getInventory().setItem(slot, item);
         int menuSlot = slot < 9 ? slot + 36 : slot;
@@ -975,53 +947,53 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         minecraft.textInputManager().stopTextInput();
     }
 
-        @Unique
-        private int signedit$getInventorySlot(Minecraft minecraft) {
-                int selectedSlot = minecraft.player.getInventory().getSelectedSlot();
+    @Unique
+    private int signedit$getInventorySlot(Minecraft minecraft) {
+        int selectedSlot = minecraft.player.getInventory().getSelectedSlot();
 
-                if (minecraft.player.getInventory().getItem(selectedSlot).isEmpty()) {
-                        return selectedSlot;
-                }
-
-                for (int slot = 0; slot < 9; slot++) {
-                        if (slot != selectedSlot
-                                        && minecraft.player.getInventory().getItem(slot).isEmpty()) {
-                                return slot;
-                        }
-                }
-
-                return selectedSlot;
+        if (minecraft.player.getInventory().getItem(selectedSlot).isEmpty()) {
+            return selectedSlot;
         }
 
-        @Unique
-        private boolean signedit$isEmpty(SignText frontText, SignText backText) {
-                for (int line = 0; line < 4; line++) {
-                        if (!frontText.getMessage(line, false).getString().isEmpty()
-                                        || !backText.getMessage(line, false).getString().isEmpty()) {
-                                return false;
-                        }
-                }
-
-                return true;
+        for (int slot = 0; slot < 9; slot++) {
+            if (slot != selectedSlot
+                    && minecraft.player.getInventory().getItem(slot).isEmpty()) {
+                return slot;
+            }
         }
 
-        @Unique
-        private boolean signedit$textEquals(SignText first, SignText second) {
-                return SignText.DIRECT_CODEC.encodeStart(
-                                net.minecraft.nbt.NbtOps.INSTANCE,
-                                first
-                ).getOrThrow().equals(
-                                SignText.DIRECT_CODEC.encodeStart(
-                                                net.minecraft.nbt.NbtOps.INSTANCE,
-                                                second
-                                ).getOrThrow()
-                );
+        return selectedSlot;
+    }
+
+    @Unique
+    private boolean signedit$isEmpty(SignText frontText, SignText backText) {
+        for (int line = 0; line < 4; line++) {
+            if (!frontText.getMessage(line, false).getString().isEmpty()
+                    || !backText.getMessage(line, false).getString().isEmpty()) {
+                return false;
+            }
         }
 
-        @Unique
-        private SignText signedit$normalizeText(SignText text) {
-                SignTextModel model = new SignTextModel();
-                model.loadFromSignText(text, false);
-                return model.buildSignText();
-        }
+        return true;
+    }
+
+    @Unique
+    private boolean signedit$textEquals(SignText first, SignText second) {
+        return SignText.DIRECT_CODEC.encodeStart(
+                net.minecraft.nbt.NbtOps.INSTANCE,
+                first
+        ).getOrThrow().equals(
+                SignText.DIRECT_CODEC.encodeStart(
+                        net.minecraft.nbt.NbtOps.INSTANCE,
+                        second
+                ).getOrThrow()
+        );
+    }
+
+    @Unique
+    private SignText signedit$normalizeText(SignText text) {
+        SignTextModel model = new SignTextModel();
+        model.loadFromSignText(text, false);
+        return model.buildSignText();
+    }
 }

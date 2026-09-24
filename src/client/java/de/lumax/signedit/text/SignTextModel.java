@@ -1,10 +1,9 @@
 package de.lumax.signedit.text;
 
-import org.jspecify.annotations.Nullable;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.level.block.entity.SignText;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,23 @@ public class SignTextModel {
             new StyledLine(),
             new StyledLine()
     };
+
+    private static TextStyle fromMinecraftStyle(Style style) {
+        Integer color = null;
+
+        if (style.getColor() != null) {
+            color = style.getColor().getValue();
+        }
+
+        return new TextStyle(
+                style.isBold(),
+                style.isItalic(),
+                style.isUnderlined(),
+                style.isStrikethrough(),
+                style.isObfuscated(),
+                color
+        );
+    }
 
     public StyledLine getLine(int index) {
         return lines[index];
@@ -204,23 +220,6 @@ public class SignTextModel {
                 offset += text.length();
             }
         }
-    }
-
-    private static TextStyle fromMinecraftStyle(Style style) {
-        Integer color = null;
-
-        if (style.getColor() != null) {
-            color = style.getColor().getValue();
-        }
-
-        return new TextStyle(
-                style.isBold(),
-                style.isItalic(),
-                style.isUnderlined(),
-                style.isStrikethrough(),
-                style.isObfuscated(),
-                color
-        );
     }
 
 }

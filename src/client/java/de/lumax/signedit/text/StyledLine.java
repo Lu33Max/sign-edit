@@ -7,9 +7,8 @@ import java.util.List;
 
 public class StyledLine {
 
-    private String text;
-
     private final List<StyleRange> ranges = new ArrayList<>();
+    private String text;
 
     public StyledLine() {
         this("");
@@ -170,7 +169,7 @@ public class StyledLine {
             int start,
             int end,
             @Nullable Integer color
-            ) {
+    ) {
         if (start < 0 || end > text.length() || start >= end) {
             return;
         }

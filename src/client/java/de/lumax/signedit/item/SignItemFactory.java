@@ -4,9 +4,9 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.TypedEntityData;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import net.minecraft.world.level.block.entity.SignText;
@@ -20,7 +20,7 @@ public final class SignItemFactory {
     }
 
     public static ItemStack create(
-                        WoodType woodType,
+            WoodType woodType,
             boolean hanging,
             SignText frontText,
             SignText backText
@@ -62,32 +62,32 @@ public final class SignItemFactory {
         return stack;
     }
 
-        public static List<WoodType> availableWoodTypes(boolean hanging) {
-                return WoodType.values()
-                                .filter(woodType -> hasSignBlock(woodType, hanging))
-                                .toList();
-        }
+    public static List<WoodType> availableWoodTypes(boolean hanging) {
+        return WoodType.values()
+                .filter(woodType -> hasSignBlock(woodType, hanging))
+                .toList();
+    }
 
-        private static boolean hasSignBlock(WoodType woodType, boolean hanging) {
-                return getSignBlock(woodType, hanging) != null;
-        }
+    private static boolean hasSignBlock(WoodType woodType, boolean hanging) {
+        return getSignBlock(woodType, hanging) != null;
+    }
 
-        public static Block getSignBlock(WoodType woodType, boolean hanging) {
-                Identifier id = Identifier.withDefaultNamespace(
-                                woodType.name() + (hanging ? "_hanging_sign" : "_sign")
-                );
-                Block block = BuiltInRegistries.BLOCK.getValue(id);
+    public static Block getSignBlock(WoodType woodType, boolean hanging) {
+        Identifier id = Identifier.withDefaultNamespace(
+                woodType.name() + (hanging ? "_hanging_sign" : "_sign")
+        );
+        Block block = BuiltInRegistries.BLOCK.getValue(id);
 
-                return block != null && id.equals(BuiltInRegistries.BLOCK.getKey(block))
-                                ? block
-                                : null;
-        }
+        return block != null && id.equals(BuiltInRegistries.BLOCK.getKey(block))
+                ? block
+                : null;
+    }
 
-        private static CompoundTag encode(SignText text) {
-                return (CompoundTag) SignText.DIRECT_CODEC.encodeStart(
-                                NbtOps.INSTANCE,
-                                text
-                ).getOrThrow();
-        }
+    private static CompoundTag encode(SignText text) {
+        return (CompoundTag) SignText.DIRECT_CODEC.encodeStart(
+                NbtOps.INSTANCE,
+                text
+        ).getOrThrow();
+    }
 
 }

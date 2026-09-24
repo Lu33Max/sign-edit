@@ -40,6 +40,38 @@ public class HexColorField extends EditBox {
         setResponder(this::handleInput);
     }
 
+    private static String toHex(int color) {
+        return String.format(
+                "#%06X",
+                color & 0xFFFFFF
+        );
+    }
+
+    private static Integer parseHex(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String hex = value.trim();
+
+        if (hex.startsWith("#")) {
+            hex = hex.substring(1);
+        }
+
+        if (hex.length() != 6) {
+            return null;
+        }
+
+        try {
+            return Integer.parseInt(
+                    hex,
+                    16
+            );
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
+
     @Override
     public boolean mouseClicked(
             final MouseButtonEvent event, final boolean doubleClick
@@ -74,37 +106,5 @@ public class HexColorField extends EditBox {
         setValue(toHex(color));
 
         updating = false;
-    }
-
-    private static String toHex(int color) {
-        return String.format(
-                "#%06X",
-                color & 0xFFFFFF
-        );
-    }
-
-    private static Integer parseHex(String value) {
-        if (value == null) {
-            return null;
-        }
-
-        String hex = value.trim();
-
-        if (hex.startsWith("#")) {
-            hex = hex.substring(1);
-        }
-
-        if (hex.length() != 6) {
-            return null;
-        }
-
-        try {
-            return Integer.parseInt(
-                    hex,
-                    16
-            );
-        } catch (NumberFormatException ignored) {
-            return null;
-        }
     }
 }

@@ -2,8 +2,8 @@ package de.lumax.signedit.access;
 
 import de.lumax.signedit.text.FormattingType;
 import de.lumax.signedit.text.TextStyle;
-import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.block.entity.SignText;
+import net.minecraft.world.level.block.state.properties.WoodType;
 
 public interface SignEditScreenAccess {
 
@@ -19,17 +19,17 @@ public interface SignEditScreenAccess {
 
     void signedit$toggleTextSide();
 
-        boolean signedit$isHangingSign();
+    boolean signedit$isHangingSign();
 
-        void signedit$toggleSignType();
+    void signedit$toggleSignType();
 
-        void signedit$setSessionState(
+    void signedit$setSessionState(
             SignText initialFrontText,
             SignText initialBackText,
             WoodType initialWoodType,
             SignText wideFrontText,
             SignText wideBackText
-        );
+    );
 
     TextStyle signedit$getActiveStyle();
 

@@ -16,11 +16,9 @@ public class SignColorPicker extends AbstractWidget {
     private static final int GAP = 6;
 
     private final ColorPickerState state;
-
+    private final Runnable onColorChanged;
     private boolean draggingSquare;
     private boolean draggingHue;
-
-    private final Runnable onColorChanged;
 
     public SignColorPicker(
             int x,

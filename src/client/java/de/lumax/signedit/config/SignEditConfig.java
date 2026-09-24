@@ -13,6 +13,7 @@ import java.nio.file.Path;
 
 public final class SignEditConfig {
 
+    public static final boolean DEFAULT_WRAP_TO_FIRST_LINE = false;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Logger LOGGER = LoggerFactory.getLogger(SignEditClient.MOD_ID);
     private static final Path PATH = Minecraft.getInstance()
@@ -20,9 +21,6 @@ public final class SignEditConfig {
             .toPath()
             .resolve("config")
             .resolve("signedit.json");
-
-    public static final boolean DEFAULT_WRAP_TO_FIRST_LINE = false;
-
     private static AutoLineBreakMode autoLineBreakMode = AutoLineBreakMode.DEFAULT;
     private static boolean wrapToFirstLine = DEFAULT_WRAP_TO_FIRST_LINE;
 

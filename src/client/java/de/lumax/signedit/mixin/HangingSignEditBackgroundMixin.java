@@ -20,9 +20,9 @@ public abstract class HangingSignEditBackgroundMixin {
     )
     private Identifier signedit$selectedWoodTexture(Identifier texture) {
         SignEditScreenAccess access = (SignEditScreenAccess) this;
-                if (!access.signedit$isCustomScreen()) {
-                        return texture;
-                }
+        if (!access.signedit$isCustomScreen()) {
+            return texture;
+        }
 
         return Identifier.withDefaultNamespace(
                 "textures/gui/hanging_signs/"

@@ -1,7 +1,7 @@
 package de.lumax.signedit.gui;
 
-import de.lumax.signedit.mixin.ScreenInvoker;
 import de.lumax.signedit.access.SignEditScreenAccess;
+import de.lumax.signedit.mixin.ScreenInvoker;
 import de.lumax.signedit.text.MinecraftColors;
 import net.minecraft.client.gui.screens.Screen;
 

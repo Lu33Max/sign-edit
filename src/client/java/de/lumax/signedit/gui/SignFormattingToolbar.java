@@ -1,7 +1,7 @@
 package de.lumax.signedit.gui;
 
-import de.lumax.signedit.mixin.ScreenInvoker;
 import de.lumax.signedit.access.SignEditScreenAccess;
+import de.lumax.signedit.mixin.ScreenInvoker;
 import de.lumax.signedit.text.FormattingType;
 import de.lumax.signedit.text.TextStyle;
 import net.minecraft.client.gui.components.Button;
@@ -40,6 +40,16 @@ public final class SignFormattingToolbar {
         return toolbar;
     }
 
+    private static boolean isEnabled(TextStyle style, FormattingType type) {
+        return switch (type) {
+            case BOLD -> style.bold();
+            case ITALIC -> style.italic();
+            case UNDERLINED -> style.underlined();
+            case STRIKETHROUGH -> style.strikethrough();
+            case OBFUSCATED -> style.obfuscated();
+        };
+    }
+
     public void update(TextStyle style) {
         for (Map.Entry<FormattingType, Button> entry : buttons.entrySet()) {
             boolean enabled = isEnabled(style, entry.getKey());
@@ -50,14 +60,14 @@ public final class SignFormattingToolbar {
                 case STRIKETHROUGH -> "S";
                 case OBFUSCATED -> "O";
             };
-                entry.getValue().setMessage(
+            entry.getValue().setMessage(
                     Component.literal(enabled ? "[" + label + "]" : label)
-                        .withStyle(
-                            TextStyle.EMPTY
-                                .withFormatting(entry.getKey(), true)
-                                .toMinecraftStyle()
-                        )
-                );
+                            .withStyle(
+                                    TextStyle.EMPTY
+                                            .withFormatting(entry.getKey(), true)
+                                            .toMinecraftStyle()
+                            )
+            );
         }
     }
 
@@ -70,15 +80,5 @@ public final class SignFormattingToolbar {
                 .build();
         buttons.put(type, button);
         invoker.signedit$addRenderableWidget(button);
-    }
-
-    private static boolean isEnabled(TextStyle style, FormattingType type) {
-        return switch (type) {
-            case BOLD -> style.bold();
-            case ITALIC -> style.italic();
-            case UNDERLINED -> style.underlined();
-            case STRIKETHROUGH -> style.strikethrough();
-            case OBFUSCATED -> style.obfuscated();
-        };
     }
 }

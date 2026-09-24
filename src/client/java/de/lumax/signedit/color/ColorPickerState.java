@@ -32,6 +32,10 @@ public class ColorPickerState {
         this.brightness = Math.clamp(brightness, 0.0f, 1.0f);
     }
 
+    public int getRgb() {
+        return ColorPickerUtil.hsvToRgb(hue, saturation, brightness);
+    }
+
     public void setRgb(int rgb) {
         float r = ((rgb >> 16) & 0xFF) / 255.0f;
         float g = ((rgb >> 8) & 0xFF) / 255.0f;
@@ -69,9 +73,5 @@ public class ColorPickerState {
         if (hue < 0.0f) {
             hue += 1.0f;
         }
-    }
-
-    public int getRgb() {
-        return ColorPickerUtil.hsvToRgb(hue, saturation, brightness);
     }
 }
