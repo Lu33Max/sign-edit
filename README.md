@@ -19,7 +19,7 @@ Sign Edit is a client-side Fabric mod that expands Minecraft's sign editor with 
 - Configure automatic line breaks: turn them off, move to the next line when the current one fills, or wrap the last word onto the next line.
 - Optionally loop from the last line back to the first when line wrapping reaches the end.
 - Settings are available through Mod Menu and saved in `config/signedit.json`.
-- Tested compatibility with [BigSignWriter](https://modrinth.com/mod/big-sign-writer) and [symbolchat](https://modrinth.com/mod/symbol-chat).
+- Tested compatibility with [BigSignWriter](https://modrinth.com/mod/bigsignwriter) and [symbolchat](https://modrinth.com/mod/symbol-chat).
 
 ## How to use
 
