@@ -156,6 +156,9 @@ public abstract class AbstractSignEditScreenMixin implements SignEditScreenAcces
         this.line = 0;
         this.signField.setCursorToEnd();
         this.signedit$activeStyle = TextStyle.EMPTY;
+        this.signedit$lastCursorPos = -1;
+        this.signedit$lastLine = -1;
+        this.signedit$updateFormattingFromCursor();
         this.signedit$updateToolbar();
     }
 

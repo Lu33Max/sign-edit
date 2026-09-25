@@ -15,9 +15,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.HangingSignBlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
+import net.minecraft.world.level.block.entity.SignTextSlot;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.phys.BlockHitResult;
-import org.lwjgl.glfw.GLFW;
 
 public class SignEditClient implements ClientModInitializer {
     public static final String MOD_ID = "signedit";
@@ -35,7 +35,7 @@ public class SignEditClient implements ClientModInitializer {
             BlockEntity blockEntity = client.level.getBlockEntity(hit.getBlockPos());
             if (blockEntity instanceof SignBlockEntity existing) {
                 sign = existing;
-                front = existing.isFacingFrontText(client.player);
+                front = existing.getSlotPlayerIsFacing(client.player) == SignTextSlot.FRONT;
             }
         }
 
@@ -72,8 +72,8 @@ public class SignEditClient implements ClientModInitializer {
             SignText wideBackText
     ) {
         AbstractSignEditScreen screen = sign instanceof HangingSignBlockEntity
-                ? new HangingSignEditScreen(sign, front, false)
-                : new SignEditScreen(sign, front, false);
+                ? new HangingSignEditScreen(sign, front ? SignTextSlot.FRONT : SignTextSlot.BACK, false)
+                : new SignEditScreen(sign, front ? SignTextSlot.FRONT : SignTextSlot.BACK, false);
         SignEditScreenAccess access = (SignEditScreenAccess) screen;
         access.signedit$setCustomScreen(true);
         client.gui.setScreen(screen);
@@ -88,6 +88,7 @@ public class SignEditClient implements ClientModInitializer {
                     wideBackText
             );
         }
+
     }
 
     @Override
@@ -97,7 +98,7 @@ public class SignEditClient implements ClientModInitializer {
         openEditorKey = KeyMappingHelper.registerKeyMapping(
                 new KeyMapping(
                         "key.signedit.open_editor",
-                        GLFW.GLFW_KEY_I,
+                        com.mojang.blaze3d.platform.InputConstants.KEY_I,
                         KeyMapping.Category.MISC
                 )
         );

@@ -21,8 +21,23 @@ repositories {
 	}
 }
 
+def targetMinecraft = providers.gradleProperty('targetMinecraft')
+		.orElse(providers.gradleProperty('minecraft_version'))
+		.get()
+def targetFabricApi = providers.gradleProperty('targetFabricApi')
+		.orElse(targetMinecraft == '26.3' ? '0.161.0+26.3' : project.fabric_api_version)
+		.get()
+
+if (!(targetMinecraft in ['26.2', '26.3'])) {
+	throw new GradleException("Unsupported targetMinecraft '${targetMinecraft}'. Choose 26.2 or 26.3.")
+}
+
 loom {
 	splitEnvironmentSourceSets()
+
+	sourceSets.client.java {
+		srcDir "src/versions/${targetMinecraft}/java"
+	}
 
 	mods {
 		"sign-edit" {
@@ -34,20 +49,21 @@ loom {
 
 dependencies {
 	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	minecraft "com.mojang:minecraft:${targetMinecraft}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${targetFabricApi}"
 	compileOnly "com.terraformersmc:modmenu:21.0.0-beta.1"
 }
 
 processResources {
 	def version = project.version
 	inputs.property "version", version
+	inputs.property "minecraft_version", targetMinecraft
 
 	filesMatching("fabric.mod.json") {
-		expand "version": version
+		expand "version": version, "minecraft_version": targetMinecraft
 	}
 }
 
@@ -72,6 +88,10 @@ jar {
 	from("LICENSE") {
 		rename { "${it}_$projectName"}
 	}
+}
+
+tasks.withType(Jar).configureEach {
+	archiveBaseName = "${project.name}-mc${targetMinecraft}"
 }
 
 // configure the maven publication
